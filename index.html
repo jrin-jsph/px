@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Express | Find Your Perfect Property</title>
+  <meta name="description" content="Property Express is a premium real estate agency dedicated to bringing you the best properties on the market.">
+  <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Home Specific Styles */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      background: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
+      padding-top: 80px;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to right, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      color: white;
+      max-width: 800px;
+    }
+
+    .hero h1 {
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero .subtitle {
+      color: #E2E8F0;
+      margin-bottom: 2.5rem;
+      font-size: 1.25rem;
+    }
+
+    .category-card {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .category-card:hover {
+      border-color: var(--color-accent-blue);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-5px);
+    }
+
+    .category-icon {
+      font-size: 3rem;
+      color: var(--color-accent-blue);
+      margin-bottom: 1.5rem;
+    }
+
+    .features-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+    }
+
+    .feature-item-main {
+      text-align: center;
+    }
+    
+    .feature-item-main .icon-box {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--color-accent-blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      transition: var(--transition);
+    }
+
+    .feature-item-main:hover .icon-box {
+      background: var(--color-accent-blue);
+      color: white;
+    }
+
+    .cta-section {
+      background: var(--color-primary);
+      color: white;
+      text-align: center;
+      padding: 6rem 1rem;
+    }
+
+    .cta-section h2 {
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+
+    .testimonial-card {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .testimonial-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .stars {
+      color: var(--color-accent-gold);
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container flex-between">
+      <a href="/index.html" class="logo">
+        <i class="fa-solid fa-house-chimney"></i>
+        Property<span>Express</span>
+      </a>
+      
+      <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+      
+      <nav class="nav-links">
+        <a href="/index.html" class="nav-link active">Home</a>
+        <a href="/properties.html" class="nav-link">Properties</a>
+        <a href="/about.html" class="nav-link">About Us</a>
+        <a href="/contact.html" class="nav-link">Contact</a>
+      </nav>
+      
+      <div style="display: none;" class="desktop-only">
+        <a href="/contact.html" class="btn btn-primary">Book a Visit</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <h1>Find Your Perfect Property</h1>
+      <p class="subtitle">Discover premium real estate, curated exclusively by our expert team. Experience seamless living in the home of your dreams.</p>
+      <div class="flex" style="gap: 1rem;">
+        <a href="/properties.html" class="btn btn-primary">Explore Properties</a>
+        <a href="/contact.html" class="btn btn-outline" style="color: white; border-color: white;">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Properties -->
+  <section class="section" style="background-color: var(--color-surface);">
+    <div class="container">
+      <div class="section-header flex-between" style="text-align: left; margin-bottom: 3rem;">
+        <div>
+          <h2>Featured Properties</h2>
+          <p class="subtitle">Hand-picked premium listings available right now.</p>
+        </div>
+        <a href="/properties.html" class="btn btn-outline">View All Listings</a>
+      </div>
+
+      <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+        <!-- Card 1 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge">For Sale</span>
+            <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Luxury Villa" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$1,250,000</div>
+            <h3 class="property-title">Modern Luxury Villa</h3>
+            <div class="property-location">
+              <i class="fa-solid fa-location-dot"></i> 123 Beverly Hills, California
+            </div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 4 Beds</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 3 Baths</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 3,500 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge" style="background: var(--color-primary)">For Rent</span>
+            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Penthouse Apartment" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$4,200 <span style="font-size: 1rem; color: var(--color-text-light); font-weight: normal;">/mo</span></div>
+            <h3 class="property-title">Skyline Penthouse Apartment</h3>
+            <div class="property-location">
+              <i class="fa-solid fa-location-dot"></i> Downtown Manhattan, NY
+            </div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 3 Beds</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 2 Baths</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 2,100 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge">For Sale</span>
+            <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Family Home" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$850,000</div>
+            <h3 class="property-title">Suburban Family Home</h3>
+            <div class="property-location">
+              <i class="fa-solid fa-location-dot"></i> Oakwood Drive, Texas
+            </div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 4 Beds</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 2.5 Baths</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 2,800 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Explore By Property Type</h2>
+        <p class="subtitle" style="margin: 0 auto;">Select from our wide range of property categories to find your match.</p>
+      </div>
+      
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="category-card" onclick="window.location.href='/properties.html'">
+          <i class="fa-solid fa-house category-icon"></i>
+          <h3>Villas</h3>
+          <p class="subtitle" style="font-size: 0.875rem; margin-top: 0.5rem">12 Listed</p>
+        </div>
+        <div class="category-card" onclick="window.location.href='/properties.html'">
+          <i class="fa-solid fa-building category-icon"></i>
+          <h3>Apartments</h3>
+          <p class="subtitle" style="font-size: 0.875rem; margin-top: 0.5rem">45 Listed</p>
+        </div>
+        <div class="category-card" onclick="window.location.href='/properties.html'">
+          <i class="fa-solid fa-store category-icon"></i>
+          <h3>Commercial</h3>
+          <p class="subtitle" style="font-size: 0.875rem; margin-top: 0.5rem">8 Listed</p>
+        </div>
+        <div class="category-card" onclick="window.location.href='/properties.html'">
+          <i class="fa-solid fa-map category-icon"></i>
+          <h3>Land</h3>
+          <p class="subtitle" style="font-size: 0.875rem; margin-top: 0.5rem">5 Listed</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="section" style="background-color: var(--color-surface);">
+    <div class="container">
+      <div class="section-header">
+        <h2>Why Choose Property Express?</h2>
+        <p class="subtitle" style="margin: 0 auto;">We stand out through our commitment to transparency, quality, and support.</p>
+      </div>
+
+      <div class="grid features-grid">
+        <div class="feature-item-main">
+          <div class="icon-box"><i class="fa-solid fa-certificate"></i></div>
+          <h3>Verified Properties</h3>
+          <p style="color: var(--color-text-light); margin-top: 1rem;">Every listing on our platform undergoes strict verification for your peace of mind.</p>
+        </div>
+        <div class="feature-item-main">
+          <div class="icon-box"><i class="fa-solid fa-handshake"></i></div>
+          <h3>Trusted Listings</h3>
+          <p style="color: var(--color-text-light); margin-top: 1rem;">We don't allow external agents. All properties are exclusively managed by our dedicated team.</p>
+        </div>
+        <div class="feature-item-main">
+          <div class="icon-box"><i class="fa-solid fa-headset"></i></div>
+          <h3>Expert Support</h3>
+          <p style="color: var(--color-text-light); margin-top: 1rem;">Our real estate experts guide you through every step of the buying or renting process.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>What Our Clients Say</h2>
+        <p class="subtitle" style="margin: 0 auto;">Read stories from clients who found their perfect match with us.</p>
+      </div>
+      
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <div class="testimonial-card">
+          <div class="stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          </div>
+          <p style="margin-bottom: 1.5rem; font-style: italic;">"Property Express made finding my dream apartment in the city incredibly simple. Their team was professional, and the property exceeded my expectations."</p>
+          <div class="testimonial-header">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Sarah J." class="testimonial-img">
+            <div>
+              <h4 style="margin: 0;">Sarah Jenkins</h4>
+              <p style="font-size: 0.875rem; color: var(--color-text-light);">Apartment Buyer</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          </div>
+          <p style="margin-bottom: 1.5rem; font-style: italic;">"The level of transparency and support is unmatched. I purchased a family villa through them, and the entire process was seamless from start to finish."</p>
+          <div class="testimonial-header">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Michael R." class="testimonial-img">
+            <div>
+              <h4 style="margin: 0;">Michael Roberts</h4>
+              <p style="font-size: 0.875rem; color: var(--color-text-light);">Villa Owner</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Ready To Find Your Next Property?</h2>
+      <p style="color: #E2E8F0; margin-bottom: 2rem; font-size: 1.125rem; max-width: 600px; margin-left: auto; margin-right: auto;">Our agents are ready to assist you in making the best real estate investment.</p>
+      <div class="flex-center" style="gap: 1rem; flex-wrap: wrap;">
+        <a href="/contact.html" class="btn btn-accent">Contact Us</a>
+        <a href="/contact.html" class="btn btn-outline" style="color: white; border-color: white;">Book a Visit</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="/index.html" class="logo" style="color: white; margin-bottom: 1rem; font-size: 1.8rem; display: block;">
+            <i class="fa-solid fa-house-chimney" style="color: var(--color-accent-blue);"></i> Property<span style="color: var(--color-accent-blue);">Express</span>
+          </a>
+          <p class="footer-desc">Premium real estate agency providing verified, high-quality properties with exceptional customer service and expert market insight.</p>
+          <div class="flex" style="gap: 1rem; margin-top: 1.5rem;">
+            <a href="#" style="color: white; font-size: 1.25rem;"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#" style="color: white; font-size: 1.25rem;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" style="color: white; font-size: 1.25rem;"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#" style="color: white; font-size: 1.25rem;"><i class="fa-brands fa-linkedin"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <div class="footer-links">
+            <a href="/index.html" class="footer-link">Home</a>
+            <a href="/properties.html" class="footer-link">Properties</a>
+            <a href="/about.html" class="footer-link">About Us</a>
+            <a href="/contact.html" class="footer-link">Contact</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <div class="footer-links">
+            <a href="/properties.html" class="footer-link">Luxury Villas</a>
+            <a href="/properties.html" class="footer-link">City Apartments</a>
+            <a href="/properties.html" class="footer-link">Commercial Space</a>
+            <a href="/properties.html" class="footer-link">Lands & Plots</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contact Info</h4>
+          <div class="footer-links">
+            <div class="footer-link" style="display: flex; gap: 0.5rem; align-items: flex-start;"><i class="fa-solid fa-location-dot" style="margin-top: 0.25rem;"></i> 123 Business Avenue, Suite 100, New York, NY 10001</div>
+            <div class="footer-link" style="display: flex; gap: 0.5rem; align-items: center;"><i class="fa-solid fa-phone"></i> +1 (555) 123-4567</div>
+            <div class="footer-link" style="display: flex; gap: 0.5rem; align-items: center;"><i class="fa-solid fa-envelope"></i> hello@propertyexpress.com</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 Property Express. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Actions -->
+  <div class="floating-actions">
+    <a href="https://wa.me/15551234567" target="_blank" class="float-btn float-whatsapp" title="Chat on WhatsApp">
+      <i class="fa-brands fa-whatsapp"></i>
+    </a>
+  </div>
+
+  <script src="/src/js/main.js" type="module"></script>
+</body>
+</html>

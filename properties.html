@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Properties | Property Express</title>
+  <meta name="description" content="Browse our premium selection of luxury villas, apartments, commercial spaces, and lands.">
+  <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .page-header {
+      background: var(--color-primary);
+      color: white;
+      padding: 100px 0 60px;
+      text-align: center;
+    }
+    
+    .filter-bar {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      margin-top: -40px;
+      position: relative;
+      z-index: 10;
+      border: 1px solid var(--color-border);
+    }
+    
+    .filter-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      align-items: end;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .filter-group label {
+      font-weight: 500;
+      color: var(--color-primary);
+      font-size: 0.9rem;
+    }
+    
+    .filter-group select, 
+    .filter-group input {
+      padding: 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition);
+    }
+    
+    .filter-group select:focus, 
+    .filter-group input:focus {
+      border-color: var(--color-accent-blue);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container flex-between">
+      <a href="/index.html" class="logo">
+        <i class="fa-solid fa-house-chimney"></i> Property<span>Express</span>
+      </a>
+      <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+      <nav class="nav-links">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/properties.html" class="nav-link active">Properties</a>
+        <a href="/about.html" class="nav-link">About Us</a>
+        <a href="/contact.html" class="nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <h1>Our Properties</h1>
+      <p style="color: #94A3B8; max-width: 600px; margin: 1rem auto 0;">Find the perfect property tailored to your needs and lifestyle.</p>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="container">
+    <div class="filter-bar">
+      <form class="filter-form">
+        <div class="filter-group">
+          <label>Location</label>
+          <select>
+            <option>All Locations</option>
+            <option>New York, NY</option>
+            <option>Los Angeles, CA</option>
+            <option>Miami, FL</option>
+            <option>Austin, TX</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Property Type</label>
+          <select>
+            <option>All Types</option>
+            <option>Villas</option>
+            <option>Apartments</option>
+            <option>Houses</option>
+            <option>Commercial</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Max Price</label>
+          <select>
+            <option>No Max</option>
+            <option>$500k</option>
+            <option>$1 Million</option>
+            <option>$2 Million</option>
+            <option>$5 Million+</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <button type="button" class="btn btn-primary" style="height: 48px;">
+            <i class="fa-solid fa-magnifying-glass" style="margin-right: 0.5rem;"></i> Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Properties Grid -->
+  <section class="section">
+    <div class="container">
+      <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+        <!-- Property 1 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge">For Sale</span>
+            <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Villa" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$1,250,000</div>
+            <h3 class="property-title">Modern Luxury Villa</h3>
+            <div class="property-location"><i class="fa-solid fa-location-dot"></i> Beverly Hills, CA</div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 4 Beds</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 3 Baths</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 3,500 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+
+        <!-- Property 2 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge" style="background: var(--color-primary);">For Rent</span>
+            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Apartment" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$4,200 <span style="font-size: 1rem; color: var(--color-text-light); font-weight: normal;">/mo</span></div>
+            <h3 class="property-title">Skyline Penthouse Apartment</h3>
+            <div class="property-location"><i class="fa-solid fa-location-dot"></i> Downtown Manhattan, NY</div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 3 Beds</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 2 Baths</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 2,100 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+        
+        <!-- Property 3 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge">For Sale</span>
+            <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="House" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$850,000</div>
+            <h3 class="property-title">Suburban Family Home</h3>
+            <div class="property-location"><i class="fa-solid fa-location-dot"></i> Oakwood Drive, TX</div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 4 Beds</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 2.5 Baths</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 2,800 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+
+        <!-- Property 4 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge">For Sale</span>
+            <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="House" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$1,450,000</div>
+            <h3 class="property-title">Modern Waterfront Estate</h3>
+            <div class="property-location"><i class="fa-solid fa-location-dot"></i> Miami Beach, FL</div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 5 Beds</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 4 Baths</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 4,200 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+
+        <!-- Property 5 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge" style="background: var(--color-primary);">For Rent</span>
+            <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Apartment" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$2,800 <span style="font-size: 1rem; color: var(--color-text-light); font-weight: normal;">/mo</span></div>
+            <h3 class="property-title">Chic Minimalist Studio</h3>
+            <div class="property-location"><i class="fa-solid fa-location-dot"></i> Arts District, LA</div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 1 Bed</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 1 Bath</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 900 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+
+        <!-- Property 6 -->
+        <article class="property-card">
+          <div class="property-img-wrapper">
+            <span class="property-badge">For Sale</span>
+            <img src="https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="House" class="property-img">
+          </div>
+          <div class="property-content">
+            <div class="property-price">$590,000</div>
+            <h3 class="property-title">Cozy Countryside Cottage</h3>
+            <div class="property-location"><i class="fa-solid fa-location-dot"></i> Hill Country, TX</div>
+            <div class="property-features">
+              <span class="feature-item"><i class="fa-solid fa-bed"></i> 3 Beds</span>
+              <span class="feature-item"><i class="fa-solid fa-bath"></i> 2 Baths</span>
+              <span class="feature-item"><i class="fa-solid fa-ruler-combined"></i> 1,800 sqft</span>
+            </div>
+            <a href="/property-detail.html" class="btn btn-outline" style="width: 100%;">View Details</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="/index.html" class="logo" style="color: white; margin-bottom: 1rem; font-size: 1.8rem; display: block;">
+            <i class="fa-solid fa-house-chimney" style="color: var(--color-accent-blue);"></i> Property<span style="color: var(--color-accent-blue);">Express</span>
+          </a>
+          <p class="footer-desc">Premium real estate agency providing verified, high-quality properties.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <div class="footer-links">
+            <a href="/index.html" class="footer-link">Home</a>
+            <a href="/properties.html" class="footer-link">Properties</a>
+            <a href="/about.html" class="footer-link">About Us</a>
+            <a href="/contact.html" class="footer-link">Contact</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/src/js/main.js" type="module"></script>
+</body>
+</html>
