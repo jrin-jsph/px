@@ -1,16 +1,36 @@
 import React from 'react';
-import { Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigationType, Outlet } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import WhatsAppBubble from './components/common/WhatsAppBubble';
+import AdminLayout from './admin/layouts/AdminLayout';
 
 import Home from './pages/Home';
 import Properties from './pages/Properties';
 import PropertyDetail from './pages/PropertyDetail';
 import About from './pages/About';
 import Contact from './pages/Contact';
+
+import Dashboard from './admin/pages/Dashboard';
+import AdminProperties from './admin/pages/AdminProperties';
+import Clients from './admin/pages/Clients';
+import Inquiries from './admin/pages/Inquiries';
+import Reviews from './admin/pages/Reviews';
+import Settings from './admin/pages/Settings';
+import ContactSocial from './admin/pages/ContactSocial';
+
+function PublicLayout() {
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+      <WhatsAppBubble />
+      <Footer />
+    </>
+  );
+}
 
 function AppContent() {
   const location = useLocation();
@@ -50,20 +70,33 @@ function AppContent() {
   }, [location.pathname, location.key, navType]);
 
   return (
-    <>
-      <Navbar />
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname.startsWith('/admin') ? 'admin' : location.pathname}>
+        {/* Public Routes */}
+        <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-        </Routes>
-      </AnimatePresence>
-      <WhatsAppBubble />
-      <Footer />
-    </>
+        </Route>
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="properties" element={<AdminProperties />} />
+          <Route path="properties/flats" element={<AdminProperties />} />
+          <Route path="properties/plots" element={<AdminProperties />} />
+          <Route path="properties/warehouses" element={<AdminProperties />} />
+          <Route path="properties/villas" element={<AdminProperties />} />
+          <Route path="clients" element={<Clients />} />
+          <Route path="inquiries" element={<Inquiries />} />
+          <Route path="reviews" element={<Reviews />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="contact-social" element={<ContactSocial />} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
   );
 }
 
