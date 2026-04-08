@@ -1,0 +1,99 @@
+.propertyCard {
+  background: var(--glass-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  position: relative;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.imgWrapper {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.propertyImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.propertyCard:hover .propertyImg {
+  transform: scale(1.08);
+}
+
+.badge {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1.25rem;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  z-index: 2;
+}
+
+.content {
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.price {
+  color: var(--color-primary);
+  font-size: 2.2rem;
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.05em;
+}
+
+.perMonth {
+  font-size: 1rem;
+  color: var(--color-text-light);
+  font-weight: normal;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+}
+
+.location {
+  color: var(--color-text-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 300;
+}
+
+.features {
+  display: flex;
+  gap: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  font-weight: 300;
+  margin-top: auto;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

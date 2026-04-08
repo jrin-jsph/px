@@ -1,0 +1,82 @@
+.pageWrap {
+  min-height: 100vh;
+}
+
+.pageHeader {
+  height: 40vh;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: url('https://images.unsplash.com/photo-1628624747186-a941c476b7ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
+  padding-top: 80px; /* Accounts for fixed navbar */
+}
+
+.pageHeader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.3) 100%);
+}
+
+.headerContent {
+  position: relative;
+  z-index: 10;
+  color: white;
+}
+
+.headerContent h1 {
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.categoryCard {
+  text-align: center;
+  padding: 3.5rem 2rem;
+  background: var(--glass-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  transition: var(--transition);
+  cursor: pointer;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.categoryCard:hover {
+  background: rgba(255, 255, 255, 0.55);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.categoryIcon {
+  color: #444;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+.categoryCard h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.categoryDesc {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+}
+
+.backBtn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  margin-bottom: -1rem; /* Adjusts spacing before FilterBar */
+}
+
+.backBtn:hover {
+  background: white;
+}
