@@ -8,12 +8,99 @@ import GtaMarker from '../components/ui/GtaMarker';
 import { revealVariants, revealViewport } from '../hooks/useScrollReveal';
 import styles from './Home.module.css';
 
+const CountUp = ({ end, decimals = 0, suffix = "" }) => {
+  const ref = React.useRef(null);
+  
+  React.useEffect(() => {
+    let animationFrameId;
+    const duration = 2000;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          let startTimestamp = null;
+          const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const easeProgress = 1 - Math.pow(1 - progress, 4);
+            const currentVal = easeProgress * end;
+            if (ref.current) {
+              ref.current.textContent = currentVal.toFixed(decimals) + suffix;
+            }
+            if (progress < 1) {
+              animationFrameId = window.requestAnimationFrame(step);
+            } else {
+              if (ref.current) ref.current.textContent = end.toFixed(decimals) + suffix;
+            }
+          };
+          animationFrameId = window.requestAnimationFrame(step);
+        } else {
+          window.cancelAnimationFrame(animationFrameId);
+          if (ref.current) {
+            ref.current.textContent = (0).toFixed(decimals) + suffix;
+          }
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (ref.current) observer.observe(ref.current);
+    
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+    };
+  }, [end, decimals, suffix]);
+
+  return <span ref={ref}>{(0).toFixed(decimals)}{suffix}</span>;
+};
+
 export default function Home() {
   const [featured, setFeatured] = useState([]);
 
   useEffect(() => {
     getFeaturedProperties().then(setFeatured);
   }, []);
+
+  const testimonials = [
+    {
+      id: 1,
+      name: "Sarah Jenkins",
+      role: "Apartment Buyer",
+      text: "Property Express made finding my dream apartment incredibly simple. Their team was professional, and the property exceeded my expectations.",
+      img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+    },
+    {
+      id: 2,
+      name: "Michael Roberts",
+      role: "Villa Owner",
+      text: "The level of transparency and support is unmatched. I purchased a family villa through them, and the process was seamless.",
+      img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+    },
+    {
+      id: 3,
+      name: "Emily Chen",
+      role: "Commercial Investor",
+      text: "Found the perfect retail space for my startup. The agents understood my needs perfectly and negotiated a fantastic lease.",
+      img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+    },
+    {
+      id: 4,
+      name: "David Alaba",
+      role: "First-time Buyer",
+      text: "As a first-time buyer I was terrified, but their consultants guided me through every detail with absolute patience and clarity.",
+      img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+    },
+    {
+      id: 5,
+      name: "Jessica Taylor",
+      role: "Property Seller",
+      text: "They sold my apartment in record time for above asking price! The marketing team is brilliant, and the transaction was hassle-free.",
+      img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+    }
+  ];
+
+  const duplicatedTestimonials = [...testimonials, ...testimonials];
 
   return (
     <motion.div
@@ -24,7 +111,7 @@ export default function Home() {
     >
       {/* Hero Section */}
       <section className={styles.hero}>
-        <div className={`container ${styles.heroContent}`}>
+        <div className={styles.heroContent}>
           <motion.h1 
             className={styles.heroTitle}
             initial={{ y: 30, opacity: 0 }} 
@@ -47,8 +134,8 @@ export default function Home() {
             animate={{ y: 0, opacity: 1 }} 
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <Link to="/properties" className="btn btn-primary">Explore Properties</Link>
-            <Link to="/contact" className="btn btn-outline" style={{ color: 'white', borderColor: 'white' }}>Contact Us</Link>
+            <Link to="/properties" className={`btn ${styles.btnPrimary}`}>Explore Properties</Link>
+            <Link to="/contact" className={`btn ${styles.btnSecondary}`}>Contact Us</Link>
           </motion.div>
         </div>
       </section>
@@ -82,37 +169,78 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* Stats Section */}
       <section className="section">
-        <div className="container">
+        <div className="container" style={{ padding: '2rem 0' }}>
           <motion.div 
-            className="section-header" style={{ textAlign: 'center' }}
+            className={styles.bentoGrid}
             variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
           >
-            <h2>Explore By Property Type</h2>
-            <p className="subtitle" style={{ margin: '0 auto' }}>Select from our wide range of property categories to find your match.</p>
-          </motion.div>
-
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', marginTop: '3rem' }}>
-            {[
-              { icon: HomeIcon, title: 'Villas', listed: 12 },
-              { icon: Building, title: 'Apartments', listed: 45 },
-              { icon: Store, title: 'Commercial', listed: 8 },
-              { icon: Map, title: 'Land', listed: 5 }
-            ].map((cat, i) => (
+            <div className={styles.bentoCol}>
               <motion.div 
-                key={i} 
-                variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
-                transition={{ delay: i * 0.1 }}
+                className={`${styles.statCard} ${styles.bgPurple}`}
+                initial={{ x: -100, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: false, margin: "-50px" }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
               >
-                <Link to="/properties" className={styles.categoryCard}>
-                  <cat.icon size={48} className={styles.categoryIcon} />
-                  <h3>{cat.title}</h3>
-                  <p className="subtitle" style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>{cat.listed} Listed</p>
-                </Link>
+                <h2 className={styles.statNumber}>
+                  <CountUp end={1.2} decimals={1} suffix="K+" />
+                </h2>
+                <div className={styles.statFooter}>
+                  <p>Properties Sold</p>
+                </div>
               </motion.div>
-            ))}
-          </div>
+              <motion.div 
+                className={`${styles.statCard} ${styles.bgBlack}`}
+                initial={{ y: 100, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: false, margin: "-50px" }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+              >
+                <h2 className={styles.statNumber}>
+                  <CountUp end={4.9} decimals={1} suffix="/5" />
+                </h2>
+                <div className={styles.statFooter}>
+                  <p>Client Satisfaction</p>
+                </div>
+              </motion.div>
+            </div>
+            
+            <div className={`${styles.bentoCol} ${styles.bentoOffset1}`}>
+              <motion.div 
+                className={`${styles.statCard} ${styles.bgTeal}`}
+                initial={{ y: -100, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: false, margin: "-50px" }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+              >
+                <h2 className={styles.statNumber}>
+                  <CountUp end={100} decimals={0} suffix="%" />
+                </h2>
+                <div className={styles.statFooter}>
+                  <p>Verified Listings</p>
+                </div>
+              </motion.div>
+            </div>
+
+            <div className={`${styles.bentoCol} ${styles.bentoOffset2}`}>
+              <motion.div 
+                className={`${styles.statCard} ${styles.bgGreen}`}
+                initial={{ x: 100, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: false, margin: "-50px" }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+              >
+                <h2 className={styles.statNumber}>
+                  <CountUp end={50} decimals={0} suffix="+" />
+                </h2>
+                <div className={styles.statFooter}>
+                  <p>Expert Consultants</p>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -159,41 +287,24 @@ export default function Home() {
             <p className="subtitle" style={{ margin: '0 auto' }}>Read stories from clients who found their perfect match with us.</p>
           </motion.div>
 
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', marginTop: '3rem' }}>
-            <motion.div 
-              className={styles.testimonialCard}
-              variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
-            >
-              <div className={styles.stars}>
-                {[1,2,3,4,5].map(v => <Star key={v} size={16} fill="currentColor" />)}
-              </div>
-              <p style={{ marginBottom: '1.5rem', fontStyle: 'italic' }}>"Property Express made finding my dream apartment in the city incredibly simple. Their team was professional, and the property exceeded my expectations."</p>
-              <div className={styles.testimonialHeader}>
-                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Sarah J." className={styles.testimonialImg} />
-                <div>
-                  <h4 style={{ margin: 0 }}>Sarah Jenkins</h4>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--color-text-light)' }}>Apartment Buyer</p>
+          <div className={styles.marqueeContainer}>
+            <div className={styles.marqueeTrack}>
+              {duplicatedTestimonials.map((t, idx) => (
+                <div key={idx} className={styles.testimonialCard}>
+                  <div className={styles.stars}>
+                    {[1,2,3,4,5].map(v => <Star key={v} size={16} fill="currentColor" />)}
+                  </div>
+                  <p style={{ marginBottom: '1.5rem', fontStyle: 'italic' }}>"{t.text}"</p>
+                  <div className={styles.testimonialHeader}>
+                    <img src={t.img} alt={t.name} className={styles.testimonialImg} />
+                    <div>
+                      <h4 style={{ margin: 0 }}>{t.name}</h4>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--color-text-light)' }}>{t.role}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              className={styles.testimonialCard}
-              variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
-              transition={{ delay: 0.1 }}
-            >
-              <div className={styles.stars}>
-                {[1,2,3,4,5].map(v => <Star key={v} size={16} fill="currentColor" />)}
-              </div>
-              <p style={{ marginBottom: '1.5rem', fontStyle: 'italic' }}>"The level of transparency and support is unmatched. I purchased a family villa through them, and the entire process was seamless from start to finish."</p>
-              <div className={styles.testimonialHeader}>
-                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Michael R." className={styles.testimonialImg} />
-                <div>
-                  <h4 style={{ margin: 0 }}>Michael Roberts</h4>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--color-text-light)' }}>Villa Owner</p>
-                </div>
-              </div>
-            </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
