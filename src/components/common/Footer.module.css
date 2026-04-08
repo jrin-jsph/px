@@ -69,6 +69,14 @@
   padding-left: 5px;
 }
 
+.quickLinks a:hover {
+  color: #e3464d !important;
+}
+
+.catLinks a:hover {
+  color: #6d6da9 !important;
+}
+
 .contactItem {
   display: flex;
   gap: 0.75rem;

@@ -80,21 +80,21 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className={styles.contactForm}>
                 <div className={styles.formGroup}>
                   <label>Full Name</label>
-                  <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required placeholder="John Doe" />
+                  <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
                 </div>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label>Email Address</label>
-                    <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required placeholder="john@example.com" />
+                    <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
                   </div>
                   <div className={styles.formGroup}>
                     <label>Phone Number</label>
-                    <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="+1 (555) 000-0000" />
+                    <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                   </div>
                 </div>
                 <div className={styles.formGroup}>
                   <label>Message</label>
-                  <textarea rows="5" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} required placeholder="How can we help you?"></textarea>
+                  <textarea rows="5" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} required></textarea>
                 </div>
                 <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={status === 'submitting'}>
                   {status === 'submitting' ? 'Sending...' : 'Send Message'}

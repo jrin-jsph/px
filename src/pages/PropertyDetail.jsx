@@ -1,14 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, BedDouble, Bath, Scaling, Calendar, ShieldCheck, User } from 'lucide-react';
+import { MapPin, BedDouble, Bath, Scaling, Calendar, ShieldCheck, Check, Phone, MessageCircle, ArrowLeft } from 'lucide-react';
 import { getPropertyById } from '../services/propertyService';
 import { MOCK_AGENTS } from '../data/mockProperties';
 import { revealVariants, revealViewport } from '../hooks/useScrollReveal';
 import styles from './PropertyDetail.module.css';
 
+const DEFAULT_AMENITIES = [
+  "Swimming Pool", 
+  "24/7 Security", 
+  "Private Garage (3 Cars)", 
+  "Central AC / Heating", 
+  "Smart Home System", 
+  "Outdoor BBQ Area", 
+  "City Water Supply", 
+  "High-Speed Internet"
+];
+
 export default function PropertyDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [property, setProperty] = useState(null);
   const [agent, setAgent] = useState(null);
 
@@ -23,6 +35,19 @@ export default function PropertyDetail() {
 
   if (!property) return <div style={{ padding: '8rem 2rem', textAlign: 'center' }}>Loading or not found...</div>;
 
+  // Prepare images to ensure we always have 3 for the gallery layout
+  const displayImages = [
+    property.images[0],
+    property.images[1] || property.images[0],
+    property.images[2] || property.images[0]
+  ];
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic
+    alert('Request sent!');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -31,9 +56,16 @@ export default function PropertyDetail() {
       transition={{ duration: 0.3 }}
       className={styles.pageWrap}
     >
+      {/* 1. Image Gallery */}
       <div className={styles.galleryHero}>
         <div className={styles.galleryGrid}>
-          {property.images.map((img, idx) => (
+          <button 
+            className={styles.backBtnFloating}
+            onClick={() => navigate(-1)} 
+          >
+            &larr; Back
+          </button>
+          {displayImages.map((img, idx) => (
             <div key={idx} className={`${styles.galleryItem} ${idx === 0 ? styles.galleryMain : ''}`}>
               <img src={img} alt={`${property.title} view ${idx + 1}`} />
             </div>
@@ -42,10 +74,14 @@ export default function PropertyDetail() {
       </div>
 
       <div className={`container ${styles.detailContainer}`}>
-        {/* Main Content */}
+        {/* 2. Property Info (Left Column) */}
         <div className={styles.detailMain}>
           <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}>
-            <span className={styles.badge}>{property.status}</span>
+            <div className={styles.badgeGroup}>
+              <span className={styles.badge}>{property.status}</span>
+              {property.featured && <span className={styles.badge} style={{ background: '#f5ebd9', color: '#9c6b24', border: '1px solid #dcb57e' }}>Featured</span>}
+            </div>
+            
             <div className={styles.headerRow}>
               <h1>{property.title}</h1>
               <div className={styles.price}>
@@ -61,20 +97,48 @@ export default function PropertyDetail() {
             <div className={styles.featureItem}><BedDouble size={20} /> <span>{property.beds} Bedrooms</span></div>
             <div className={styles.featureItem}><Bath size={20} /> <span>{property.baths} Bathrooms</span></div>
             <div className={styles.featureItem}><Scaling size={20} /> <span>{property.sqft.toLocaleString()} sqft</span></div>
-            <div className={styles.featureItem}><Calendar size={20} /> <span>Built 2020</span></div>
           </motion.div>
 
+          {/* Description Section */}
           <motion.div className={styles.descriptionSection} variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}>
             <h3>Property Description</h3>
             <p>{property.description}</p>
+            {/* Adding extra paragraphs to match "2-3 paragraphs" requirement */}
+            <p>The state-of-the-art kitchen comes fully equipped with premium appliances, custom cabinetry, and a large marble island perfect for entertaining. The master suite is a true sanctuary, boasting a spa-like bathroom and a private terrace. Outside, you will find a beautifully landscaped backyard complete with an infinity pool, outdoor kitchen, and fire pit.</p>
+          </motion.div>
+
+          {/* Amenities Section */}
+          <motion.div className={styles.amenitiesSection} variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}>
+            <h3>Amenities</h3>
+            <div className={styles.amenitiesGrid}>
+              {DEFAULT_AMENITIES.map((amenity, idx) => (
+                <div key={idx} className={styles.amenityItem}>
+                  <Check size={18} color="#c53030" />
+                  <span>{amenity}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Location Map Section */}
+          <motion.div className={styles.mapSection} variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}>
+            <h3>Location Map</h3>
+            <div className={styles.mapWrapper}>
+              <iframe
+                title="Property Location"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(property.location)}&output=embed`}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
           </motion.div>
         </div>
 
-        {/* Sidebar */}
+        {/* 3. Sidebar */}
         <motion.div className={styles.detailSidebar} variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}>
           <div className={styles.sidebarSticky}>
             <div className={styles.agentCard}>
-              <h3 style={{ marginBottom: '1.5rem', fontSize: '1.25rem' }}>Listed By</h3>
               {agent && (
                 <div className={styles.agentInfo}>
                   <img src={agent.photo} alt={agent.name} className={styles.agentPhoto} />
@@ -84,17 +148,41 @@ export default function PropertyDetail() {
                   </div>
                 </div>
               )}
-              <div className={styles.agentContacts}>
-                {agent && <a href={`tel:${agent.phone.replace(/\D/g, '')}`} className="btn btn-primary" style={{ width: '100%', marginBottom: '1rem' }}>Call Agent</a>}
-                <Link to="/contact" className="btn btn-outline" style={{ width: '100%' }}>Send Message</Link>
-              </div>
-            </div>
-            
-            <div className={styles.buyerProtection}>
-              <ShieldCheck size={32} color="var(--color-accent-blue)" />
-              <div>
-                <h4>Buyer Protection</h4>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-light)' }}>100% verified properties.</p>
+              
+              <div className={styles.contactFormWrap}>
+                <h4 style={{ marginBottom: '1.25rem', fontSize: '1.1rem', fontWeight: '400' }}>Interested in this property?</h4>
+                <form className={styles.contactForm} onSubmit={handleFormSubmit}>
+                  <input type="text" placeholder="Your Name" required />
+                  <input type="tel" placeholder="Phone Number" required />
+                  <input type="email" placeholder="Email Address" required />
+                  <textarea 
+                    rows="2" 
+                    placeholder="Message" 
+                    defaultValue={`I am interested in Property Express listing...`}
+                    required
+                  ></textarea>
+                  
+                  <div className={styles.actionButtons}>
+                    <button type="submit" className="btn" style={{ background: '#4a4a4a', color: 'white', border: 'none', padding: '0.85rem' }}>
+                      Request Info
+                    </button>
+                    {agent && (
+                      <a href={`tel:${agent.phone.replace(/\D/g, '')}`} className="btn btn-outline" style={{ background: 'white' }}>
+                        <Phone size={18} /> Call Now
+                      </a>
+                    )}
+                    {agent && (
+                      <a 
+                        href={`https://wa.me/${agent.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`I am interested in ${property.title}`)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={styles.btnWhatsapp}
+                      >
+                        <MessageCircle size={18} /> WhatsApp
+                      </a>
+                    )}
+                  </div>
+                </form>
               </div>
             </div>
           </div>

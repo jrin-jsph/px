@@ -1,31 +1,55 @@
-import React, { useContext, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Building, Store, Map, ArrowLeft } from 'lucide-react';
-import { PropertiesContext } from '../context/PropertiesContext';
-import PropertyCard from '../components/ui/PropertyCard';
-import FilterBar from '../components/ui/FilterBar';
+import { Home, Building, Store, Map } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { revealVariants, revealViewport } from '../hooks/useScrollReveal';
+import CategoryHero from './CategoryHero';
 import styles from './Properties.module.css';
 
 const CATEGORIES = [
-  { id: 'Villa', title: 'Villas', icon: Home, desc: 'Luxury standalone houses' },
-  { id: 'Apartment', title: 'Flats & Apartments', icon: Building, desc: 'Premium city living' },
-  { id: 'Commercial', title: 'Commercial & Warehouses', icon: Store, desc: 'Office and retail spaces' },
-  { id: 'Plot', title: 'Plots & Land', icon: Map, desc: 'Build your dream project' }
+  {
+    id: 'Villa',
+    title: 'Villas',
+    icon: Home,
+    desc: 'Luxury standalone houses',
+    img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'Apartment',
+    title: 'Flats & Apartments',
+    icon: Building,
+    desc: 'Premium city living',
+    img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'Commercial',
+    title: 'Commercial',
+    icon: Store,
+    desc: 'Office and retail spaces',
+    img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'Plot',
+    title: 'Plots & Land',
+    icon: Map,
+    desc: 'Build your dream project',
+    img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+  },
 ];
 
 export default function Properties() {
-  const { properties, loading, error, setFilters, filters } = useContext(PropertiesContext);
-  const [selectedCategory, setSelectedCategory] = useState(filters.type || null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const catId = searchParams.get('category');
+  const selectedCategory = CATEGORIES.find(c => c.id === catId) || null;
 
-  const handleSelectCategory = (categoryId) => {
-    setSelectedCategory(categoryId);
-    setFilters({ ...filters, type: categoryId });
+  const handleSelectCategory = (cat) => {
+    setSearchParams({ category: cat.id });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBack = () => {
-    setSelectedCategory(null);
-    setFilters({});
+    setSearchParams({});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -36,86 +60,78 @@ export default function Properties() {
       transition={{ duration: 0.3 }}
       className={styles.pageWrap}
     >
-      <section className={styles.pageHeader}>
-        <div className={`container ${styles.headerContent}`}>
-          <h1>Our Properties</h1>
-          <p className="subtitle">Discover our portfolio of premium real estate listings.</p>
-        </div>
-      </section>
+      <AnimatePresence mode="wait">
+        {!selectedCategory ? (
+          /* ── Category Selection Screen ─────────────────────── */
+          <motion.div
+            key="categories"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            transition={{ duration: 0.4 }}
+          >
+            <section className={styles.pageHeader}>
+              <div className={`container ${styles.headerContent}`}>
+                <h1>Our Properties</h1>
+                <p className="subtitle">Choose a category to start exploring.</p>
+              </div>
+            </section>
 
-      <section className="section" style={{ paddingTop: '0' }}>
-        <div className="container" style={{ marginTop: selectedCategory ? '0' : '4rem' }}>
-          
-          <AnimatePresence mode="wait">
-            {!selectedCategory ? (
-              <motion.div 
-                key="categories"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="grid" 
-                style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}
-              >
-                {CATEGORIES.map((cat, i) => (
-                  <motion.div 
-                    key={cat.id}
-                    variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <div 
-                      className={styles.categoryCard} 
-                      onClick={() => handleSelectCategory(cat.id)}
+            <section className="section" style={{ paddingTop: '4rem' }}>
+              <div className="container">
+                <div className={styles.catGrid}>
+                  {CATEGORIES.map((cat, i) => (
+                    <motion.div
+                      key={cat.id}
+                      variants={revealVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={revealViewport}
+                      transition={{ delay: i * 0.1 }}
+                      className={styles.catCardWrap}
+                      onClick={() => handleSelectCategory(cat)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSelectCategory(cat)}
                     >
-                      <cat.icon size={48} className={styles.categoryIcon} />
-                      <h2>{cat.title}</h2>
-                      <p className={styles.categoryDesc}>{cat.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="properties"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <button onClick={handleBack} className={`btn ${styles.backBtn}`}>
-                  <ArrowLeft size={18} style={{ marginRight: '0.5rem' }} /> Back to Categories
-                </button>
+                      <div className={styles.catCard}>
+                        {/* Background image */}
+                        <img src={cat.img} alt={cat.title} className={styles.catBgImg} />
+                        <div className={styles.catOverlay} />
 
-                <div style={{ marginTop: '2rem' }}>
-                  <FilterBar />
+                        {/* Content */}
+                        <div className={styles.catContent}>
+                          <div className={styles.catIconWrap}>
+                            <cat.icon size={28} />
+                          </div>
+                          <h2 className={styles.catTitle}>{cat.title}</h2>
+                          <p className={styles.catDesc}>{cat.desc}</p>
+                          <span className={styles.catCta}>Explore →</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-
-                <div style={{ marginTop: '4rem' }}>
-                  {loading && <p>Loading properties...</p>}
-                  {error && <p>Error: {error}</p>}
-                  
-                  {!loading && !error && (
-                    <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))' }}>
-                      {properties.map((prop, i) => (
-                        <motion.div 
-                          key={prop.id}
-                          variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <PropertyCard property={prop} />
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {!loading && properties.length === 0 && (
-                    <p>No properties found matching your criteria.</p>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-        </div>
-      </section>
+              </div>
+            </section>
+          </motion.div>
+        ) : (
+          /* ── Category Hero + Scroll Animation Screen ──────── */
+          <motion.div
+            key="hero"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <CategoryHero
+              categoryId={selectedCategory.id}
+              categoryTitle={selectedCategory.title}
+              onBack={handleBack}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

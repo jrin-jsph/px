@@ -44,7 +44,7 @@ export default function Footer() {
 
           <div className={styles.footerCol}>
             <h4>Quick Links</h4>
-            <div className={styles.footerLinks}>
+            <div className={`${styles.footerLinks} ${styles.quickLinks}`}>
               <Link to="/">Home</Link>
               <Link to="/properties">Properties</Link>
               <Link to="/about">About Us</Link>
@@ -54,11 +54,11 @@ export default function Footer() {
 
           <div className={styles.footerCol}>
             <h4>Categories</h4>
-            <div className={styles.footerLinks}>
-              <Link to="/properties">Luxury Villas</Link>
-              <Link to="/properties">City Apartments</Link>
-              <Link to="/properties">Commercial Space</Link>
-              <Link to="/properties">Lands & Plots</Link>
+            <div className={`${styles.footerLinks} ${styles.catLinks}`}>
+              <Link to="/properties?category=Villa">Luxury Villas</Link>
+              <Link to="/properties?category=Apartment">City Apartments</Link>
+              <Link to="/properties?category=Commercial">Commercial Space</Link>
+              <Link to="/properties?category=Plot">Lands &amp; Plots</Link>
             </div>
           </div>
 

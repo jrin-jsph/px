@@ -30,7 +30,9 @@ export const MOCK_PROPERTIES = [
     sqft: 2100,
     description: 'Luxurious penthouse apartment in Downtown Manhattan. Enjoy panoramic views, a private rooftop terrace, and state-of-the-art amenities.',
     images: [
-      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
     ],
     agentId: 'agent-2',
     featured: true
@@ -47,7 +49,9 @@ export const MOCK_PROPERTIES = [
     sqft: 2800,
     description: 'Spacious family home located in a quiet suburban neighborhood. Features a large backyard, updated kitchen, and cozy fireplace.',
     images: [
-      'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
     ],
     agentId: 'agent-1',
     featured: true
@@ -64,7 +68,9 @@ export const MOCK_PROPERTIES = [
     sqft: 4200,
     description: 'Breathtaking waterfront estate with private dock, infinity edge pool, and modern minimalist interiors.',
     images: [
-      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1501183638710-841dd1904471?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
     ],
     agentId: 'agent-2',
     featured: false
@@ -81,7 +87,9 @@ export const MOCK_PROPERTIES = [
     sqft: 900,
     description: 'Perfect for artists and professionals. This chic studio is located in the vibrant Arts District.',
     images: [
-      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1493809842364-78817add7ff6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
     ],
     agentId: 'agent-1',
     featured: false
@@ -98,7 +106,9 @@ export const MOCK_PROPERTIES = [
     sqft: 1800,
     description: 'Escape the city to this cozy cottage. Surrounded by nature, it offers a peaceful retreat with modern comforts.',
     images: [
-      'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1588880331179-bc9b93a8cb65?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
     ],
     agentId: 'agent-2',
     featured: false

@@ -1,4 +1,5 @@
 import { MOCK_PROPERTIES } from '../data/mockProperties';
+import { CATEGORY_IMAGES } from '../data/categoryImages';
 
 export const getFeaturedProperties = async () =>
   MOCK_PROPERTIES.filter(p => p.featured);
@@ -17,5 +18,10 @@ export const getAllProperties = async (filters = {}) => {
   return results;
 };
 
+const ALL_DATA = [
+  ...MOCK_PROPERTIES,
+  ...Object.values(CATEGORY_IMAGES).flat()
+];
+
 export const getPropertyById = async (id) =>
-  MOCK_PROPERTIES.find(p => p.id === id) ?? null;
+  ALL_DATA.find(p => p.id === id) ?? null;

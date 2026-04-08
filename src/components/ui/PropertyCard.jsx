@@ -7,17 +7,27 @@ import styles from './PropertyCard.module.css';
 export default function PropertyCard({ property }) {
   const { id, title, price, status, location, beds, baths, sqft, images } = property;
 
+  const displayImages = [
+    images[0],
+    images[1] || images[0],
+    images[2] || images[0]
+  ];
+
   return (
     <motion.article 
       className={styles.propertyCard}
       whileHover={{ y: -8, scale: 1.02 }}
       transition={{ duration: 0.3 }}
     >
-      <div className={styles.imgWrapper}>
+      <div className={styles.imgGallery}>
         <span className={styles.badge} style={{ backgroundColor: status === 'For Rent' ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.5)', color: status === 'For Rent' ? 'white' : '#222' }}>
           {status}
         </span>
-        <img src={images[0]} alt={title} className={styles.propertyImg} />
+        {displayImages.map((img, idx) => (
+          <div key={idx} className={`${styles.galleryItem} ${idx === 0 ? styles.galleryMain : ''}`}>
+            <img src={img} alt={`${title} view ${idx + 1}`} className={styles.propertyImg} />
+          </div>
+        ))}
       </div>
       <div className={styles.content}>
         <div className={styles.price}>

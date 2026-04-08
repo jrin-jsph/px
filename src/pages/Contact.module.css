@@ -91,6 +91,17 @@
 .formGroup input,
 .formGroup textarea {
   width: 100%;
+  border: 1.5px solid #d1d5db;
+  background: #fafafa;
+  border-radius: 10px;
+  color: #1a1a1a;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  border-color: #1a1a1a;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.06);
 }
 
 @media (max-width: 768px) {

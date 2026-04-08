@@ -11,11 +11,15 @@
 
 .galleryGrid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  grid-template-rows: 250px 250px;
+  grid-template-columns: 65fr 35fr;
+  grid-template-rows: 1fr 1fr;
   gap: 1rem;
+  height: 50vh;
+  min-height: 400px;
+  max-height: 600px;
   border-radius: var(--radius-lg);
   overflow: hidden;
+  position: relative;
 }
 
 .galleryItem {
@@ -38,12 +42,44 @@
   grid-row: 1 / 3;
 }
 
+.backBtnFloating {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #ffffff;
+  color: #111111;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 0.65rem 1.75rem;
+  border-radius: 40px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.backBtnFloating:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
 .detailContainer {
   display: grid;
-  grid-template-columns: 2.2fr 1fr;
+  grid-template-columns: 65fr 35fr;
   gap: 3rem;
   padding-top: 3rem;
   padding-bottom: 5rem;
+}
+
+.badgeGroup {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .badge {
@@ -53,7 +89,6 @@
   font-size: 0.85rem;
   background: var(--color-primary);
   color: white;
-  margin-bottom: 1rem;
   backdrop-filter: blur(10px);
 }
 
@@ -115,12 +150,53 @@
 
 .descriptionSection h3 {
   margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-primary);
 }
 
 .descriptionSection p {
   color: var(--color-text-light);
   line-height: 1.8;
   font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.amenitiesSection {
+  margin-top: 3rem;
+}
+
+.amenitiesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.amenityItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-text);
+  font-size: 1.05rem;
+}
+
+.mapSection {
+  margin-top: 3rem;
+}
+
+.mapWrapper {
+  margin-top: 1.5rem;
+  height: 400px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.mapWrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 /* Sidebar Styles */
@@ -153,6 +229,70 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+.contactFormWrap {
+  margin-top: 1.5rem;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contactForm input,
+.contactForm textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: white;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.contactForm input:focus,
+.contactForm textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.actionButtons .btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btnWhatsapp {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 0.875rem 2rem;
+  border-radius: 30px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: inherit;
+}
+
+.btnWhatsapp:hover {
+  border-color: #25D366;
+  color: #25D366;
+}
+
 
 .buyerProtection {
   display: flex;

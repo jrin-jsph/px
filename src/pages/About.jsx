@@ -22,38 +22,18 @@ export default function About() {
 
       <section className="section">
         <div className="container">
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '4rem' }}>
-            <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}>
-              <h2>Our Story</h2>
-              <p style={{ color: 'var(--color-text-light)', marginTop: '1.5rem', fontSize: '1.1rem' }}>
-                Founded in 2020, Property Express started with a simple mission: to eliminate the friction from buying and renting premium properties. Fast forward to today, and we have become the region's leading exclusive real estate agency.
-              </p>
-              <p style={{ color: 'var(--color-text-light)', marginTop: '1rem', fontSize: '1.1rem' }}>
-                We believe that finding a home should be an inspiring journey, not a stressful task. That's why we don't rely on external agents—every property listed is verified and managed by our in-house experts.
-              </p>
-            </motion.div>
-            
-            <motion.div className={styles.statsGrid} variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport} transition={{ delay: 0.2 }}>
-              <div className={styles.statCard}>
-                <div className={styles.statNum}>1.2K+</div>
-                <div className={styles.statLabel}>Properties Sold</div>
-              </div>
-              <div className={styles.statCard}>
-                <div className={styles.statNum}>100%</div>
-                <div className={styles.statLabel}>Verified Listings</div>
-              </div>
-              <div className={styles.statCard}>
-                <div className={styles.statNum}>4.9/5</div>
-                <div className={styles.statLabel}>Client Satisfaction</div>
-              </div>
-              <div className={styles.statCard}>
-                <div className={styles.statNum}>50+</div>
-                <div className={styles.statLabel}>Expert Consultants</div>
-              </div>
-            </motion.div>
-          </div>
+          <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport} style={{ maxWidth: '720px' }}>
+            <h2>Our Story</h2>
+            <p style={{ color: 'var(--color-text-light)', marginTop: '1.5rem', fontSize: '1.1rem' }}>
+              Founded in 2020, Property Express started with a simple mission: to eliminate the friction from buying and renting premium properties. Fast forward to today, and we have become the region's leading exclusive real estate agency.
+            </p>
+            <p style={{ color: 'var(--color-text-light)', marginTop: '1rem', fontSize: '1.1rem' }}>
+              We believe that finding a home should be an inspiring journey, not a stressful task. That's why we don't rely on external agents—every property listed is verified and managed by our in-house experts.
+            </p>
+          </motion.div>
         </div>
       </section>
+
 
       <section className="section" style={{ backgroundColor: 'var(--color-surface)' }}>
         <div className="container">
