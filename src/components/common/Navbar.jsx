@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScrolled } from '../../hooks/useScrolled';
 import styles from './Navbar.module.css';
+import logo from '../../assets/logo.png';
 
 export default function Navbar() {
   const isScrolled = useScrolled();
@@ -14,7 +15,7 @@ export default function Navbar() {
       <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
         <div className={`container flex-between ${styles.navContainer}`}>
           <Link to="/" className={styles.logo} onClick={() => setIsMobileMenuOpen(false)}>
-            <img src="/src/assets/logo.png" alt="Property Express" className={styles.logoImg} />
+            <img src={logo} alt="Property Express" className={styles.logoImg} />
           </Link>
 
           <button 

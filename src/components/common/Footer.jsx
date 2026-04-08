@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail } from 'lucide-react';
 import styles from './Footer.module.css';
+import logo from '../../assets/logo.png';
 
 const FacebookIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -30,7 +31,7 @@ export default function Footer() {
         <div className={styles.footerGrid}>
           <div className={styles.footerCol}>
             <Link to="/" className={styles.logo}>
-              <img src="/src/assets/logo.png" alt="Property Express" className={styles.logoImg} />
+              <img src={logo} alt="Property Express" className={styles.logoImg} />
             </Link>
             <p className={styles.footerDesc}>
               Premium real estate agency providing verified, high-quality properties with exceptional customer service and expert market insight.
