@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Instagram, Facebook } from 'lucide-react';
+import { Phone, Mail, MapPin, Link } from 'lucide-react';
 import styles from '../styles/admin.module.css';
 
 export default function ContactSocial() {
@@ -31,8 +31,8 @@ export default function ContactSocial() {
           
           <div style={{ height: 1, background: 'var(--admin-stroke)', margin: '1rem 0' }}></div>
 
-          <InputGroup icon={Instagram} label="Instagram Profile URL" placeholder="https://instagram.com/..." defaultValue="https://instagram.com/propertyexpress" />
-          <InputGroup icon={Facebook} label="Facebook Page URL" placeholder="https://facebook.com/..." defaultValue="https://facebook.com/propertyexpress" />
+          <InputGroup icon={Link} label="Instagram Profile URL" placeholder="https://instagram.com/..." defaultValue="https://instagram.com/propertyexpress" />
+          <InputGroup icon={Link} label="Facebook Page URL" placeholder="https://facebook.com/..." defaultValue="https://facebook.com/propertyexpress" />
 
           <button className="btn" style={{ width: '100%', background: '#ed1b24', color: 'white', border: 'none', fontWeight: 700, padding: '1rem', marginTop: '1rem' }}>
             Save Contact Information
