@@ -6,24 +6,37 @@ import { useAdmin } from '../context/AdminContext';
 import styles from '../styles/admin.module.css';
 import logo from '../../assets/logo.png';
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 export default function TopNavbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { notifications, markAllAsRead, deleteNotification, clearAllNotifications, isDark, toggleTheme } = useAdmin();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const isMobile = useIsMobile();
 
   const notifRef = useRef(null);
   const aboutRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (notifRef.current && !notifRef.current.contains(event.target)) setShowNotifications(false);
-      if (aboutRef.current && !aboutRef.current.contains(event.target)) setShowAbout(false);
+      if (!isMobile) {
+        if (notifRef.current && !notifRef.current.contains(event.target)) setShowNotifications(false);
+        if (aboutRef.current && !aboutRef.current.contains(event.target)) setShowAbout(false);
+      }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isMobile]);
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -57,7 +70,8 @@ export default function TopNavbar() {
     navigate(n.link);
   };
 
-  const panelStyle = {
+  /* ─── Shared panel styles based on mobile vs desktop ─── */
+  const desktopPanelStyle = {
     position: 'absolute',
     top: 'calc(100% + 1rem)',
     right: 0,
@@ -70,6 +84,20 @@ export default function TopNavbar() {
     boxShadow: isDark ? '0 20px 60px rgba(0,0,0,0.40)' : '0 20px 60px rgba(0,0,0,0.15)',
   };
 
+  const sheetContentStyle = {
+    background: isDark ? 'rgba(14, 18, 32, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+    backdropFilter: 'blur(40px) saturate(200%)',
+    WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+    border: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(255,255,255,0.90)',
+    borderTop: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(255,255,255,0.90)',
+    borderRadius: '24px 24px 0 0',
+    width: '100%',
+    maxHeight: '80vh',
+    overflowY: 'auto',
+  };
+
+  const dividerColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+
   const infoRows = [
     ['Version', 'v1.0.0'],
     ['Build', '2026'],
@@ -78,30 +106,149 @@ export default function TopNavbar() {
     ['Font', 'Outfit'],
   ];
 
+  /* ─── Notification Panel Content (shared) ─── */
+  const NotifContent = () => (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {/* Header */}
+      <div style={{ padding: '1.25rem 1.25rem 1rem', borderBottom: `1px solid ${dividerColor}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--admin-text-main)' }}>Notifications</h3>
+          {notifications.length > 0 && (
+            <span style={{ background: '#ed1b24', color: 'white', width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 700 }}>
+              {notifications.length}
+            </span>
+          )}
+        </div>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {unreadCount > 0 && (
+            <button onClick={markAllAsRead} style={{ background: 'none', border: 'none', fontSize: '0.8rem', color: 'var(--admin-text-muted)', cursor: 'pointer' }}>
+              Mark all read
+            </button>
+          )}
+          {notifications.length > 0 && (
+            <button onClick={clearAllNotifications} style={{ background: 'none', border: 'none', fontSize: '0.8rem', color: '#ed1b24', cursor: 'pointer', fontWeight: 600 }}>
+              Clear All
+            </button>
+          )}
+          {isMobile && (
+            <button onClick={() => setShowNotifications(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-text-muted)', display: 'flex', alignItems: 'center' }}>
+              <X size={20} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {notifications.length === 0 ? (
+        <div style={{ padding: '3rem 1.5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+          <Bell size={36} style={{ color: 'var(--admin-text-muted)', opacity: 0.3 }} />
+          <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-muted)', fontWeight: 300 }}>You're all caught up</p>
+        </div>
+      ) : (
+        <AnimatePresence initial={false}>
+          {notifications.map((n, i) => (
+            <motion.div
+              key={n.id}
+              initial={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+              transition={{ duration: 0.2 }}
+              onClick={() => handleNotifClick(n)}
+              style={{
+                padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', gap: '0.875rem', alignItems: 'flex-start', position: 'relative',
+                borderBottom: i < notifications.length - 1 ? `1px solid ${dividerColor}` : 'none',
+                background: n.read ? 'transparent' : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.6)'),
+                borderLeft: n.read ? '2px solid transparent' : '2px solid #ed1b24',
+              }}
+            >
+              <div style={{ padding: '0.5rem', background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', borderRadius: '50%', color: 'var(--admin-text-muted)', flexShrink: 0 }}>
+                {getNotifIcon(n.type)}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ margin: '0 0 0.25rem', fontSize: '0.85rem', fontWeight: 400, color: 'var(--admin-text-body)', lineHeight: 1.4 }}>{n.message}</p>
+                <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)' }}>{n.time}</span>
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); deleteNotification(n.id); }}
+                style={{ width: 20, height: 20, borderRadius: '50%', border: 'none', cursor: 'pointer', flexShrink: 0, background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', color: 'var(--admin-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s, color 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(237,27,36,0.1)'; e.currentTarget.style.color = '#ed1b24'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'; e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
+              >
+                <X size={11} />
+              </button>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      )}
+    </div>
+  );
+
+  /* ─── About Panel Content (shared) ─── */
+  const AboutContent = () => (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '1.75rem 1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', borderBottom: `1px solid ${dividerColor}`, position: 'relative' }}>
+        {isMobile && (
+          <button onClick={() => setShowAbout(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-text-muted)' }}>
+            <X size={20} />
+          </button>
+        )}
+        <img src={logo} alt="Property Express" style={{ height: 64, objectFit: 'contain' }} />
+        <h3 style={{ margin: '0.5rem 0 0', fontSize: '1.1rem', fontWeight: 700, color: 'var(--admin-text-main)' }}>Property Express</h3>
+        <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-muted)', fontWeight: 300 }}>Admin Dashboard</p>
+      </div>
+      <div style={{ padding: '1rem 1.5rem', display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {infoRows.map(([label, value], i) => (
+          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.65rem 0', borderBottom: i < infoRows.length - 1 ? `1px solid ${dividerColor}` : 'none' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)', fontWeight: 300 }}>{label}</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-main)', fontWeight: 600 }}>{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  /* ─── Mobile Bottom Sheet Wrapper ─── */
+  const BottomSheet = ({ show, onClose, children }) => (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.45)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+        >
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 32, stiffness: 320 }}
+            onClick={e => e.stopPropagation()}
+            style={sheetContentStyle}
+          >
+            {children}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <header className={styles.topNav}>
       <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
 
       <div className={styles.navActions}>
         {/* Theme Toggle */}
-        <button className={styles.iconBtn} onClick={toggleTheme}>
+        <button className={styles.iconBtn} onClick={toggleTheme} style={{ width: 40, height: 40 }}>
           {isDark ? <Sun size={20} /> : <Moon size={20} />}
         </button>
 
         {/* Notification Bell */}
         <div style={{ position: 'relative' }} ref={notifRef}>
-          <button className={styles.iconBtn} onClick={() => { setShowNotifications(v => !v); setShowAbout(false); }}>
+          <button className={styles.iconBtn} onClick={() => { setShowNotifications(v => !v); setShowAbout(false); }} style={{ width: 40, height: 40, position: 'relative' }}>
             <Bell size={20} />
             <AnimatePresence>
               {unreadCount > 0 && (
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
-                  style={{
-                    position: 'absolute', top: 6, right: 6,
-                    background: '#ed1b24', color: 'white',
-                    width: 16, height: 16, borderRadius: '50%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '0.6rem', fontWeight: 700, pointerEvents: 'none'
-                  }}
+                  style={{ position: 'absolute', top: 2, right: 2, background: '#ed1b24', color: 'white', width: 16, height: 16, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: 700, pointerEvents: 'none' }}
                 >
                   {unreadCount}
                 </motion.div>
@@ -109,127 +256,58 @@ export default function TopNavbar() {
             </AnimatePresence>
           </button>
 
-          {/* Notification Panel */}
-          <AnimatePresence>
-            {showNotifications && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                style={{ ...panelStyle, width: 360, maxHeight: 480, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}
-              >
-                {/* Header */}
-                <div style={{ padding: '1.25rem 1.25rem 1rem', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--admin-text-main)' }}>Notifications</h3>
-                    {notifications.length > 0 && (
-                      <span style={{ background: '#ed1b24', color: 'white', width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 700 }}>
-                        {notifications.length}
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem' }}>
-                    {unreadCount > 0 && (
-                      <button onClick={markAllAsRead} style={{ background: 'none', border: 'none', fontSize: '0.8rem', color: 'var(--admin-text-muted)', cursor: 'pointer' }}>
-                        Mark all read
-                      </button>
-                    )}
-                    {notifications.length > 0 && (
-                      <button onClick={clearAllNotifications} style={{ background: 'none', border: 'none', fontSize: '0.8rem', color: '#ed1b24', cursor: 'pointer', fontWeight: 600 }}>
-                        Clear All
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Notification Items */}
-                {notifications.length === 0 ? (
-                  <div style={{ padding: '3rem 1.5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
-                    <Bell size={36} style={{ color: 'var(--admin-text-muted)', opacity: 0.3 }} />
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-muted)', fontWeight: 300 }}>You're all caught up</p>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <AnimatePresence initial={false}>
-                      {notifications.map((n, i) => (
-                        <motion.div
-                          key={n.id}
-                          initial={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
-                          transition={{ duration: 0.2 }}
-                          onClick={() => handleNotifClick(n)}
-                          style={{
-                            padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', gap: '0.875rem', alignItems: 'flex-start', position: 'relative',
-                            borderBottom: i < notifications.length - 1 ? `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'}` : 'none',
-                            background: n.read ? 'transparent' : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.6)'),
-                            borderLeft: n.read ? '2px solid transparent' : '2px solid #ed1b24',
-                            transition: 'background 0.2s'
-                          }}
-                        >
-                          <div style={{ padding: '0.5rem', background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', borderRadius: '50%', color: 'var(--admin-text-muted)', flexShrink: 0 }}>
-                            {getNotifIcon(n.type)}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <p style={{ margin: '0 0 0.25rem', fontSize: '0.85rem', fontWeight: 400, color: 'var(--admin-text-body)', lineHeight: 1.4 }}>{n.message}</p>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)' }}>{n.time}</span>
-                          </div>
-                          {/* Delete × */}
-                          <button
-                            onClick={(e) => { e.stopPropagation(); deleteNotification(n.id); }}
-                            style={{
-                              width: 20, height: 20, borderRadius: '50%', border: 'none', cursor: 'pointer', flexShrink: 0,
-                              background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
-                              color: 'var(--admin-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              transition: 'background 0.2s, color 0.2s'
-                            }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(237,27,36,0.1)'; e.currentTarget.style.color = '#ed1b24'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'; e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
-                          >
-                            <X size={11} />
-                          </button>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Desktop dropdown */}
+          {!isMobile && (
+            <AnimatePresence>
+              {showNotifications && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ ...desktopPanelStyle, width: 360, maxHeight: 480, overflowY: 'auto' }}
+                >
+                  <NotifContent />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
         </div>
 
-        {/* Logo Avatar + About Panel */}
+        {/* Logo Avatar + About */}
         <div style={{ position: 'relative' }} ref={aboutRef}>
-          <button
-            onClick={() => { setShowAbout(v => !v); setShowNotifications(false); }}
-            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
-          >
+          <button onClick={() => { setShowAbout(v => !v); setShowNotifications(false); }} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
             <img src={logo} alt="Property Express" className={styles.avatar} />
           </button>
 
-          <AnimatePresence>
-            {showAbout && (
-              <motion.div
-                initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                style={{ ...panelStyle, width: 300 }}
-              >
-                <div style={{ padding: '1.75rem 1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}>
-                  <img src={logo} alt="Property Express" style={{ height: 64, objectFit: 'contain' }} />
-                  <h3 style={{ margin: '0.5rem 0 0', fontSize: '1.1rem', fontWeight: 700, color: 'var(--admin-text-main)' }}>Property Express</h3>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-muted)', fontWeight: 300 }}>Admin Dashboard</p>
-                </div>
-                <div style={{ padding: '1rem 1.5rem', display: 'flex', flexDirection: 'column', gap: 0 }}>
-                  {infoRows.map(([label, value], i) => (
-                    <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.65rem 0', borderBottom: i < infoRows.length - 1 ? `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` : 'none' }}>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)', fontWeight: 300 }}>{label}</span>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-main)', fontWeight: 600 }}>{value}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Desktop dropdown */}
+          {!isMobile && (
+            <AnimatePresence>
+              {showAbout && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ ...desktopPanelStyle, width: 300 }}
+                >
+                  <AboutContent />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
         </div>
       </div>
+
+      {/* Mobile Bottom Sheet — Notifications */}
+      {isMobile && (
+        <BottomSheet show={showNotifications} onClose={() => setShowNotifications(false)}>
+          <NotifContent />
+        </BottomSheet>
+      )}
+
+      {/* Mobile Bottom Sheet — About */}
+      {isMobile && (
+        <BottomSheet show={showAbout} onClose={() => setShowAbout(false)}>
+          <AboutContent />
+        </BottomSheet>
+      )}
     </header>
   );
 }

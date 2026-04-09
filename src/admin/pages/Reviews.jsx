@@ -86,7 +86,7 @@ export default function Reviews() {
       </div>
 
       {/* Review Cards Grid */}
-      <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.5rem' }}>
+      <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))', gap: '1.5rem' }}>
         <AnimatePresence mode="popLayout">
           {loading ? (
              [...Array(3)].map((_, idx) => (
@@ -107,33 +107,33 @@ export default function Reviews() {
                 exit={{ opacity: 0, scale: 0.95, y: -10 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
                 className={styles.glassCard}
-                style={{ display: 'flex', flexDirection: 'column' }}
+                style={{ display: 'flex', flexDirection: 'column', width: '100%', boxSizing: 'border-box', overflow: 'hidden', minWidth: 0 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>{review.name}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', gap: '0.5rem' }}>
+                  <div style={{ minWidth: 0 }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{review.name}</h3>
                     <div style={{ display: 'flex', gap: '2px', marginTop: '0.5rem' }}>
                       {[...Array(5)].map((_, idx) => (
                         <Star key={idx} size={14} fill={idx < review.rating ? '#18181a' : 'transparent'} color={idx < review.rating ? '#18181a' : 'var(--admin-stroke)'} />
                       ))}
                     </div>
                   </div>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>{review.date}</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)', flexShrink: 0 }}>{review.date}</span>
                 </div>
                 
-                <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--admin-text-body)', fontWeight: 300, flex: 1 }}>
+                <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--admin-text-body)', fontWeight: 300, flex: 1, wordBreak: 'break-word' }}>
                   "{review.text}"
                 </p>
 
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', borderTop: '1px solid var(--admin-stroke)', paddingTop: '1.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', borderTop: '1px solid var(--admin-stroke)', paddingTop: '1.5rem' }}>
                   {activeTab !== 'Approved' && (
-                    <button onClick={() => updateStatus(review.id, 'Approved')} className="btn" style={{ flex: 1, background: 'transparent', border: '1px solid var(--admin-text-main)', color: 'var(--admin-text-main)' }}>
-                      <Check size={16} style={{ marginRight: '0.5rem' }} /> Approve
+                    <button onClick={() => updateStatus(review.id, 'Approved')} className="btn" style={{ flex: 1, minWidth: 0, background: 'transparent', border: '1px solid var(--admin-text-main)', color: 'var(--admin-text-main)', fontSize: '0.85rem', padding: '0.6rem 0.5rem' }}>
+                      <Check size={14} style={{ marginRight: '0.35rem' }} /> Approve
                     </button>
                   )}
                   {activeTab !== 'Rejected' && (
-                    <button onClick={() => updateStatus(review.id, 'Rejected')} className="btn" style={{ flex: 1, background: 'transparent', borderColor: '#ed1b24', color: '#ed1b24' }}>
-                      <X size={16} style={{ marginRight: '0.5rem' }} /> Reject
+                    <button onClick={() => updateStatus(review.id, 'Rejected')} className="btn" style={{ flex: 1, minWidth: 0, background: 'transparent', borderColor: '#ed1b24', color: '#ed1b24', fontSize: '0.85rem', padding: '0.6rem 0.5rem' }}>
+                      <X size={14} style={{ marginRight: '0.35rem' }} /> Reject
                     </button>
                   )}
                 </div>

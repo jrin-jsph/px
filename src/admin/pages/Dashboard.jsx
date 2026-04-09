@@ -126,7 +126,8 @@ export default function Dashboard() {
       ) : (
         <>
           {/* Charts Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)', gap: '1.5rem' }}>
+          <div className={styles.chartsGrid} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)', gap: '1.5rem' }}>
+            <style>{`@media(max-width:767px){.charts-grid{grid-template-columns:1fr!important}}`}</style>
 
             {/* Donut / Pie */}
             <motion.div className={styles.glassCard} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}>
