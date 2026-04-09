@@ -58,6 +58,36 @@ const CountUp = ({ end, decimals = 0, suffix = "" }) => {
 export default function Home() {
   const [featured, setFeatured] = useState([]);
 
+  // Review Modal State
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [hoveredStar, setHoveredStar] = useState(0);
+  const [userTestimonials, setUserTestimonials] = useState([]);
+  const [reviewForm, setReviewForm] = useState({ rating: 0, name: '', role: '', text: '' });
+  const [reviewErrors, setReviewErrors] = useState({ rating: false, name: false, text: false });
+
+  const handleSubmitReview = () => {
+    const errors = {
+      rating: reviewForm.rating === 0,
+      name:   !reviewForm.name.trim(),
+      text:   !reviewForm.text.trim(),
+    };
+    setReviewErrors(errors);
+    if (Object.values(errors).some(Boolean)) return;
+
+    setUserTestimonials(prev => [...prev, {
+      id:     Date.now(),
+      name:   reviewForm.name.trim(),
+      role:   reviewForm.role.trim() || 'Client',
+      text:   reviewForm.text.trim(),
+      rating: reviewForm.rating,
+      img:    null,
+    }]);
+    setReviewForm({ rating: 0, name: '', role: '', text: '' });
+    setHoveredStar(0);
+    setReviewSubmitted(true);
+  };
+
   useEffect(() => {
     getFeaturedProperties().then(setFeatured);
   }, []);
@@ -279,7 +309,7 @@ export default function Home() {
       {/* Testimonials */}
       <section className="section">
         <div className="container">
-          <motion.div 
+          <motion.div
             className="section-header" style={{ textAlign: 'center' }}
             variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
           >
@@ -289,14 +319,22 @@ export default function Home() {
 
           <div className={styles.marqueeContainer}>
             <div className={styles.marqueeTrack}>
-              {duplicatedTestimonials.map((t, idx) => (
+              {[...testimonials, ...userTestimonials, ...testimonials, ...userTestimonials].map((t, idx) => (
                 <div key={idx} className={styles.testimonialCard}>
                   <div className={styles.stars}>
-                    {[1,2,3,4,5].map(v => <Star key={v} size={16} fill="currentColor" />)}
+                    {[1,2,3,4,5].map(v => (
+                      <Star key={v} size={16} fill={v <= (t.rating || 5) ? 'currentColor' : 'none'} style={{ opacity: v <= (t.rating || 5) ? 1 : 0.25 }} />
+                    ))}
                   </div>
                   <p style={{ marginBottom: '1.5rem', fontStyle: 'italic' }}>"{t.text}"</p>
                   <div className={styles.testimonialHeader}>
-                    <img src={t.img} alt={t.name} className={styles.testimonialImg} />
+                    {t.img ? (
+                      <img src={t.img} alt={t.name} className={styles.testimonialImg} />
+                    ) : (
+                      <div className={styles.testimonialImg} style={{ background: 'var(--color-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.1rem' }}>
+                        {t.name?.charAt(0) || '?'}
+                      </div>
+                    )}
                     <div>
                       <h4 style={{ margin: 0 }}>{t.name}</h4>
                       <p style={{ fontSize: '0.875rem', color: 'var(--color-text-light)' }}>{t.role}</p>
@@ -306,8 +344,182 @@ export default function Home() {
               ))}
             </div>
           </div>
+
+          {/* CTA to share review */}
+          <motion.div
+            style={{ textAlign: 'center', marginTop: '3rem' }}
+            variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
+          >
+            <p style={{ color: 'var(--color-text-light)', marginBottom: '1.25rem' }}>Worked with us? We'd love to hear from you.</p>
+            <button
+              onClick={() => setShowReviewModal(true)}
+              className="btn btn-outline"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
+            >
+              <Star size={16} /> Share Your Experience
+            </button>
+          </motion.div>
         </div>
       </section>
+
+      {/* Review Submission Modal */}
+      {showReviewModal && (
+        <div
+          onClick={() => { setShowReviewModal(false); setReviewSubmitted(false); }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 999,
+            background: 'rgba(0,0,0,0.35)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1rem'
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 32, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 32, scale: 0.96 }}
+            transition={{ duration: 0.3 }}
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'rgba(255,255,255,0.88)',
+              backdropFilter: 'blur(32px)',
+              border: '1px solid rgba(255,255,255,0.75)',
+              borderRadius: 24,
+              boxShadow: '0 24px 80px rgba(0,0,0,0.18)',
+              width: '100%',
+              maxWidth: 480,
+              padding: '2.5rem',
+              fontFamily: 'Outfit, sans-serif',
+              position: 'relative'
+            }}
+          >
+            {/* Close */}
+            <button
+              onClick={() => { setShowReviewModal(false); setReviewSubmitted(false); }}
+              style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'rgba(0,0,0,0.06)', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', color: '#555' }}
+            >
+              ×
+            </button>
+
+            {reviewSubmitted ? (
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '1rem 0' }}>
+                <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#18181a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                  <Star size={28} fill="white" color="white" />
+                </div>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.04em', marginBottom: '0.5rem' }}>Thank You!</h3>
+                <p style={{ color: '#555', fontWeight: 300, lineHeight: 1.6 }}>Your testimonial has been added. We truly appreciate you sharing your experience with Property Express.</p>
+                <button
+                  onClick={() => { setShowReviewModal(false); setReviewSubmitted(false); }}
+                  style={{ marginTop: '1.5rem', background: '#18181a', color: 'white', border: 'none', borderRadius: 12, padding: '0.875rem 2rem', fontWeight: 700, fontFamily: 'Outfit', cursor: 'pointer', fontSize: '0.95rem' }}
+                >
+                  Close
+                </button>
+              </motion.div>
+            ) : (
+              <>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.04em', marginBottom: '0.25rem' }}>Share Your Experience</h3>
+                <p style={{ color: '#555', fontWeight: 300, marginBottom: '2rem', fontSize: '0.9rem' }}>Tell others about your journey with Property Express.</p>
+
+                {/* Star Rating */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#555', marginBottom: '0.75rem' }}>
+                    Your Rating <span style={{ color: '#ed1b24' }}>*</span>
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <button
+                        key={star}
+                        onMouseEnter={() => setHoveredStar(star)}
+                        onMouseLeave={() => setHoveredStar(0)}
+                        onClick={() => setReviewForm(f => ({ ...f, rating: star }))}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', transition: 'transform 0.15s' }}
+                        onMouseDown={e => e.currentTarget.style.transform = 'scale(0.85)'}
+                        onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+                      >
+                        <Star
+                          size={32}
+                          fill={(hoveredStar || reviewForm.rating) >= star ? '#18181a' : 'none'}
+                          color={(hoveredStar || reviewForm.rating) >= star ? '#18181a' : '#ccc'}
+                          style={{ transition: 'all 0.15s' }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  {reviewErrors.rating && <span style={{ color: '#ed1b24', fontSize: '0.78rem', marginTop: '0.25rem', display: 'block' }}>Please select a rating.</span>}
+                </div>
+
+                {/* Name */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#555', marginBottom: '0.5rem' }}>
+                    Your Name <span style={{ color: '#ed1b24' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Ravi Kumar"
+                    value={reviewForm.name}
+                    onChange={e => { setReviewForm(f => ({ ...f, name: e.target.value })); setReviewErrors(ev => ({ ...ev, name: false })); }}
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: 12, fontFamily: 'Outfit', fontSize: '0.95rem',
+                      border: reviewErrors.name ? '1.5px solid #ed1b24' : '1.5px solid rgba(0,0,0,0.12)',
+                      background: 'rgba(255,255,255,0.6)', outline: 'none', boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                {/* Role */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#555', marginBottom: '0.5rem' }}>
+                    Your Role
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. First-time Buyer, Investor..."
+                    value={reviewForm.role}
+                    onChange={e => setReviewForm(f => ({ ...f, role: e.target.value }))}
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: 12, fontFamily: 'Outfit', fontSize: '0.95rem',
+                      border: '1.5px solid rgba(0,0,0,0.12)', background: 'rgba(255,255,255,0.6)', outline: 'none', boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                {/* Testimonial */}
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#555', marginBottom: '0.5rem' }}>
+                    Your Testimonial <span style={{ color: '#ed1b24' }}>*</span>
+                  </label>
+                  <textarea
+                    placeholder="Tell us about your experience with Property Express..."
+                    rows={4}
+                    value={reviewForm.text}
+                    onChange={e => { setReviewForm(f => ({ ...f, text: e.target.value })); setReviewErrors(ev => ({ ...ev, text: false })); }}
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: 12, fontFamily: 'Outfit', fontSize: '0.95rem',
+                      border: reviewErrors.text ? '1.5px solid #ed1b24' : '1.5px solid rgba(0,0,0,0.12)',
+                      background: 'rgba(255,255,255,0.6)', outline: 'none', resize: 'vertical', boxSizing: 'border-box', minHeight: 110
+                    }}
+                  />
+                  {reviewErrors.text && <span style={{ color: '#ed1b24', fontSize: '0.78rem', display: 'block', marginTop: '0.25rem' }}>Please write your testimonial.</span>}
+                </div>
+
+                <button
+                  onClick={handleSubmitReview}
+                  style={{
+                    width: '100%', padding: '1rem', background: '#18181a', color: 'white', border: 'none',
+                    borderRadius: 14, fontWeight: 700, fontFamily: 'Outfit', fontSize: '1rem', cursor: 'pointer',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.18)', transition: 'transform 0.15s, box-shadow 0.15s'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.24)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.18)'; }}
+                >
+                  Submit Testimonial
+                </button>
+              </>
+            )}
+          </motion.div>
+        </div>
+      )}
+
 
       {/* GTA Map Section */}
       <section className={`cta-section ${styles.interactiveMapSection}`}>
