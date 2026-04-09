@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Home as HomeIcon, Building, Store, Map, Award, Handshake, Headphones, Star } from 'lucide-react';
@@ -372,11 +373,11 @@ export default function Home() {
       </section>
 
       {/* Review Submission Modal */}
-      {showReviewModal && (
+      {showReviewModal && createPortal(
         <div
           onClick={() => { setShowReviewModal(false); setReviewSubmitted(false); }}
           style={{
-            position: 'fixed', inset: 0, zIndex: 999,
+            position: 'fixed', inset: 0, zIndex: 99999,
             background: 'rgba(0,0,0,0.35)',
             backdropFilter: 'blur(8px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -544,7 +545,8 @@ export default function Home() {
               </>
             )}
           </motion.div>
-        </div>
+        </div>,
+        document.body
       )}
 
 
