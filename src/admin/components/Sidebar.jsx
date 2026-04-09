@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Users, MessageSquare, Star, Settings, Link as LinkIcon, ChevronLeft, ChevronRight, LogOut, Building2, Trash2 } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Star, Settings, Link as LinkIcon, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { FlatIcon, VillaIcon, PlotIcon, WarehouseIcon } from './icons/PropertyIcons';
 import { useAdmin } from '../context/AdminContext';
 import styles from '../styles/admin.module.css';
@@ -9,58 +9,31 @@ import logo from '../../assets/logo.png';
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
-  const { sections, logout, customCategories, deleteCustomCategory, properties } = useAdmin();
+  const { sections, logout } = useAdmin();
   const navigate = useNavigate();
-
-  const handleDeleteCustom = (e, name) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const propsCount = properties.filter(p => p.category.toLowerCase() === name.toLowerCase()).length;
-    const msg = `This type has ${propsCount} properties. Delete all or keep properties but remove type?\n\nOK = Delete All\nCancel = Keep Properties (Moves to Uncategorized)`;
-    if (window.confirm(msg)) {
-      deleteCustomCategory(name, 'delete');
-    } else {
-      deleteCustomCategory(name, 'keep');
-    }
-    const pathSegments = window.location.pathname.split('/');
-    if (pathSegments[pathSegments.length - 1].toLowerCase() === name.toLowerCase()) {
-      navigate('/admin/properties');
-    }
-  };
 
   const handleLogout = () => {
     logout();
     navigate('/admin'); // Assuming /admin redirects to login naturally when unauthenticated
   };
 
-  const NavItem = ({ to, icon: Icon, label, isCustom }) => (
-    <div style={{ position: 'relative' }}>
-      <NavLink 
-        to={to} 
-        end={to === '/admin'}
-        className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
-        style={{ overflow: 'hidden', whiteSpace: 'nowrap', padding: collapsed ? '0.65rem 0' : '0.65rem 1.5rem', justifyContent: collapsed ? 'center' : 'flex-start' }}
-        title={collapsed ? label : ''}
-      >
-        <Icon size={18} style={{ minWidth: 18 }} />
-        <AnimatePresence>
-          {!collapsed && (
-            <motion.span initial={{opacity:0, width:0}} animate={{opacity:1, width:'auto'}} exit={{opacity:0, width:0}} style={{ marginLeft: '0.75rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {label}
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </NavLink>
-      {isCustom && !collapsed && (
-        <button 
-          onClick={(e) => handleDeleteCustom(e, label)}
-          style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--admin-text-muted)' }}
-          title={`Delete ${label}`}
-        >
-          <Trash2 size={14} />
-        </button>
-      )}
-    </div>
+  const NavItem = ({ to, icon: Icon, label }) => (
+    <NavLink 
+      to={to} 
+      end={to === '/admin'}
+      className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
+      style={{ overflow: 'hidden', whiteSpace: 'nowrap', padding: collapsed ? '0.65rem 0' : '0.65rem 1.5rem', justifyContent: collapsed ? 'center' : 'flex-start' }}
+      title={collapsed ? label : ''}
+    >
+      <Icon size={18} style={{ minWidth: 18 }} />
+      <AnimatePresence>
+        {!collapsed && (
+          <motion.span initial={{opacity:0, width:0}} animate={{opacity:1, width:'auto'}} exit={{opacity:0, width:0}} style={{ marginLeft: '0.75rem' }}>
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </NavLink>
   );
 
   return (
@@ -99,11 +72,6 @@ export default function Sidebar() {
                  <NavItem to="/admin/properties/villas" icon={VillaIcon} label="Villas" />
               </motion.div>
             )}
-            {customCategories.map(cat => (
-              <motion.div key={cat} initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
-                 <NavItem to={`/admin/properties/${cat.toLowerCase()}`} icon={Building2} label={cat} isCustom />
-              </motion.div>
-            ))}
           </AnimatePresence>
         </div>
 
