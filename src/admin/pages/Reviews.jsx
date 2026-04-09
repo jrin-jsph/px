@@ -48,16 +48,16 @@ export default function Reviews() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* Filters Bar */}
-      <div className={styles.glassCard} style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
-        
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.4)', padding: '0.25rem', borderRadius: 40, border: '1px solid var(--admin-stroke)' }}>
+      <div className={styles.glassCard} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+        {/* Tabs Row — full width, wraps on mobile */}
+        <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.4)', padding: '0.25rem', borderRadius: 40, border: '1px solid var(--admin-stroke)', overflowX: 'auto', flexShrink: 0 }}>
           {['Pending', 'Approved', 'Rejected'].map(tab => (
             <button
               key={tab}
               onClick={() => { setActiveTab(tab); setLoading(true); }}
               style={{
-                padding: '0.6rem 1.5rem', borderRadius: 30, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.3s ease',
+                flex: 1, whiteSpace: 'nowrap', padding: '0.6rem 1.25rem', borderRadius: 30, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.3s ease',
                 background: activeTab === tab ? '#18181a' : 'transparent', color: activeTab === tab ? '#fff' : 'var(--admin-text-muted)'
               }}
             >
@@ -66,17 +66,20 @@ export default function Reviews() {
           ))}
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flex: 1, justifyContent: 'flex-end' }}>
-          <div style={{ position: 'relative', width: 260 }}>
-            <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)' }} />
-            <input 
+        {/* Search + Filter Row */}
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: '1 1 180px', minWidth: 0 }}>
+            <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }} />
+            <input
               type="text" placeholder="Search reviews..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-              style={{ width: '100%', paddingLeft: '2.5rem', fontSize: '0.85rem' }} 
+              style={{ width: '100%', paddingLeft: '2.5rem', fontSize: '0.85rem', boxSizing: 'border-box' }}
             />
             {searchTerm && <X size={14} onClick={() => setSearchTerm('')} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--admin-text-muted)' }} />}
           </div>
 
-          <select value={ratingFilter} onChange={e => setRatingFilter(e.target.value)} style={{ padding: '0.5rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600, fontSize: '0.85rem' }}>
+          <select value={ratingFilter} onChange={e => setRatingFilter(e.target.value)}
+            style={{ flex: '0 1 auto', padding: '0.6rem 0.75rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600, fontSize: '0.85rem', color: 'var(--admin-text-main)' }}
+          >
             <option value="All">All Stars</option>
             <option value="5">⭐⭐⭐⭐⭐</option>
             <option value="4">⭐⭐⭐⭐</option>
@@ -84,6 +87,7 @@ export default function Reviews() {
           </select>
         </div>
       </div>
+
 
       {/* Review Cards Grid */}
       <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))', gap: '1.5rem' }}>
