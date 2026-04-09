@@ -397,6 +397,8 @@ export default function Home() {
               boxShadow: '0 24px 80px rgba(0,0,0,0.18)',
               width: '100%',
               maxWidth: 480,
+              maxHeight: '90vh',
+              overflowY: 'auto',
               padding: '2.5rem',
               fontFamily: 'Outfit, sans-serif',
               position: 'relative'
