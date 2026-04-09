@@ -85,10 +85,7 @@ function AppContent() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="properties" element={<AdminProperties />} />
-          <Route path="properties/flats" element={<AdminProperties />} />
-          <Route path="properties/plots" element={<AdminProperties />} />
-          <Route path="properties/warehouses" element={<AdminProperties />} />
-          <Route path="properties/villas" element={<AdminProperties />} />
+          <Route path="properties/:category" element={<AdminProperties />} />
           <Route path="inquiries" element={<Inquiries />} />
           <Route path="reviews" element={<Reviews />} />
           <Route path="settings" element={<Settings />} />

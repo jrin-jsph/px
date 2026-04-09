@@ -3,15 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, Edit2, Trash2, X, UploadCloud, User } from 'lucide-react';
 import { FlatIcon, PlotIcon, WarehouseIcon, VillaIcon } from '../components/icons/PropertyIcons';
+import { useAdmin } from '../context/AdminContext';
 import styles from '../styles/admin.module.css';
-
-const MOCK_PROPERTIES = [
-  { id: 1, title: 'Skyline Penthouse', category: 'Flat', price: '45000000', area: '3200', bedrooms: '4', bathrooms: '3', location: 'Downtown', address: '12 Sky Tower, Downtown', status: 'Active', isFeatured: true, numericPrice: 45000000, agentName: 'Ravi Kumar', agentPhone: '+91 9876543210', agentPhoto: null, description: 'Stunning penthouse with panoramic city views.', amenities: ['Swimming Pool', 'Gym', 'Elevator'], mapsUrl: '' },
-  { id: 2, title: 'Azure Villa', category: 'Villa', price: '80000000', area: '8500', bedrooms: '6', bathrooms: '5', location: 'Suburbs', address: '45 Green Meadows, Suburbs', status: 'Active', isFeatured: false, numericPrice: 80000000, agentName: 'Priya Mehta', agentPhone: '+91 9876543211', agentPhoto: null, description: 'Luxury villa with private pool and garden.', amenities: ['Swimming Pool', '24/7 Security', 'Private Garage'], mapsUrl: '' },
-  { id: 3, title: 'Oceanview Plot', category: 'Plot', price: '21000000', area: '5000', bedrooms: '', bathrooms: '', location: 'Coastal', address: '78 Coastal Road, Marine Drive', status: 'Inactive', isFeatured: false, numericPrice: 21000000, agentName: 'Suresh Patel', agentPhone: '+91 9876543212', agentPhoto: null, description: 'Prime coastal plot with ocean views.', amenities: ['City Water Supply'], mapsUrl: '' },
-  { id: 4, title: 'Industrial Hub', category: 'Warehouse', price: '120000000', area: '25000', bedrooms: '', bathrooms: '', location: 'Outskirts', address: '1 Industrial Estate, Outskirts', status: 'Active', isFeatured: false, numericPrice: 120000000, agentName: 'Amit Shah', agentPhone: '+91 9876543213', agentPhoto: null, description: 'Large warehouse complex with loading docks.', amenities: ['Power Backup', 'CCTV', '24/7 Security'], mapsUrl: '' },
-  { id: 5, title: 'Modern Studio', category: 'Flat', price: '8500000', area: '650', bedrooms: '1', bathrooms: '1', location: 'Downtown', address: '5 Central Ave, Downtown', status: 'Active', isFeatured: true, numericPrice: 8500000, agentName: 'Ravi Kumar', agentPhone: '+91 9876543210', agentPhoto: null, description: 'Compact modern studio in city centre.', amenities: ['High-Speed Internet', 'CCTV'], mapsUrl: '' },
-];
 
 const PRESET_AMENITIES = [
   'Swimming Pool', '24/7 Security', 'Private Garage', 'Central AC / Heating',
@@ -21,7 +14,7 @@ const PRESET_AMENITIES = [
 
 export default function AdminProperties() {
   const location = useLocation();
-  const [properties, setProperties] = useState([]);
+  const { properties, setProperties, customCategories, addCustomCategory } = useAdmin();
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -31,9 +24,7 @@ export default function AdminProperties() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
   const [locFilter, setLocFilter] = useState('All');
-  const [catFilter, setCatFilter] = useState('All');
   const [sortOrder, setSortOrder] = useState('Newest First');
-  const [customCategories, setCustomCategories] = useState([]);
   
   // Image Upload State
   const [images, setImages] = useState([]);
@@ -87,14 +78,8 @@ export default function AdminProperties() {
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
-      let filteredDb = MOCK_PROPERTIES;
-      if (activeCategory !== 'properties') {
-        const catMap = { flats: 'Flat', plots: 'Plot', warehouses: 'Warehouse', villas: 'Villa' };
-        filteredDb = MOCK_PROPERTIES.filter(p => p.category === catMap[activeCategory]);
-      }
-      setProperties(filteredDb);
       setLoading(false);
-    }, 600);
+    }, 400);
     return () => clearTimeout(timer);
   }, [activeCategory]);
 
@@ -119,23 +104,32 @@ export default function AdminProperties() {
 
   const filteredProperties = useMemo(() => {
     return properties.filter(p => {
+      let matchRouteCat = true;
+      if (activeCategory !== 'properties') {
+        const catMap = { flats: 'Flat', plots: 'Plot', warehouses: 'Warehouse', villas: 'Villa' };
+        const targetCat = catMap[activeCategory] || activeCategory;
+        matchRouteCat = p.category.toLowerCase() === targetCat.toLowerCase();
+      }
+
       const term = searchTerm.toLowerCase();
       const matchSearch = p.title.toLowerCase().includes(term) || p.location.toLowerCase().includes(term);
       const matchStatus = statusFilter === 'All' || p.status === statusFilter;
       const matchLoc = locFilter === 'All' || p.location === locFilter;
-      const matchCat = catFilter === 'All' || p.category === catFilter;
+      const matchCat = catFilter === 'All' || p.category.toLowerCase() === catFilter.toLowerCase();
+      
       let matchPrice = true;
       if (priceFilter === 'Under ₹50L') matchPrice = p.numericPrice < 5000000;
       if (priceFilter === '₹50L–₹1Cr') matchPrice = p.numericPrice >= 5000000 && p.numericPrice <= 10000000;
       if (priceFilter === '₹1Cr–₹5Cr') matchPrice = p.numericPrice > 10000000 && p.numericPrice <= 50000000;
       if (priceFilter === 'Above ₹5Cr') matchPrice = p.numericPrice > 50000000;
-      return matchSearch && matchStatus && matchLoc && matchCat && matchPrice;
+      
+      return matchRouteCat && matchSearch && matchStatus && matchLoc && matchCat && matchPrice;
     }).sort((a, b) => {
       if (sortOrder === 'Price: Low to High') return a.numericPrice - b.numericPrice;
       if (sortOrder === 'Price: High to Low') return b.numericPrice - a.numericPrice;
       return 0; 
     });
-  }, [properties, searchTerm, statusFilter, locFilter, catFilter, priceFilter, sortOrder]);
+  }, [properties, activeCategory, searchTerm, statusFilter, locFilter, catFilter, priceFilter, sortOrder]);
 
   const clearFilters = () => {
     setSearchTerm(''); setStatusFilter('All'); setPriceFilter('All'); setLocFilter('All'); setCatFilter('All'); setSortOrder('Newest First');
@@ -273,12 +267,12 @@ export default function AdminProperties() {
               style={{ background: 'var(--admin-glass-bg)', border: '1px solid var(--admin-stroke)', padding: '0.75rem 1rem', fontWeight: 600, cursor: 'pointer' }}
               onClick={() => {
                 const newCat = window.prompt("Enter new custom category name:");
-                if (newCat && newCat.trim() && !customCategories.includes(newCat.trim())) {
-                  setCustomCategories(prev => [...prev, newCat.trim()]);
-                  setShowToast('Custom category added!');
-                  setTimeout(() => setShowToast(''), 2500);
-                }
-              }}
+              if (newCat && newCat.trim()) {
+                addCustomCategory(newCat);
+                setShowToast('Custom category added!');
+                setTimeout(() => setShowToast(''), 2500);
+              }
+            }}
             >
               + Custom Type
             </button>

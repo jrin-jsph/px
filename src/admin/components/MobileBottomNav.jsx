@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Building2, MessageSquare, Star, Menu, X, Users, Settings, Link as LinkIcon, LogOut, Home, Store, Warehouse, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
+import { LayoutDashboard, Building2, MessageSquare, Star, Menu, X, Users, Settings, Link as LinkIcon, LogOut, Home, Store, Warehouse, MapPin, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../context/AdminContext';
 import styles from '../styles/admin.module.css';
@@ -9,8 +9,24 @@ import logo from '../../assets/logo.png';
 export default function MobileBottomNav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [propExpanded, setPropExpanded] = useState(true);
-  const { logout } = useAdmin();
+  const { logout, customCategories, deleteCustomCategory, properties } = useAdmin();
   const navigate = useNavigate();
+
+  const handleDeleteCustom = (e, name) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const propsCount = properties.filter(p => p.category.toLowerCase() === name.toLowerCase()).length;
+    const msg = `This type has ${propsCount} properties. Delete all or keep properties but remove type?\n\nOK = Delete All\nCancel = Keep Properties (Moves to Uncategorized)`;
+    if (window.confirm(msg)) {
+      deleteCustomCategory(name, 'delete');
+    } else {
+      deleteCustomCategory(name, 'keep');
+    }
+    const pathSegments = window.location.pathname.split('/');
+    if (pathSegments[pathSegments.length - 1].toLowerCase() === name.toLowerCase()) {
+      navigate('/admin/properties');
+    }
+  };
 
   const handleLogout = () => {
     setDrawerOpen(false);
@@ -114,16 +130,36 @@ export default function MobileBottomNav() {
                     >
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', padding: '0.5rem 0 0.75rem' }}>
                         {propertyTypes.map(({ to, icon: Icon, label }) => (
-                          <NavLink
-                            key={to}
-                            to={to}
-                            onClick={() => setDrawerOpen(false)}
-                            className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
-                            style={{ borderRadius: 12, padding: '0.75rem 1rem', flexDirection: 'column', alignItems: 'flex-start', gap: '0.4rem' }}
-                          >
-                            <Icon size={18} />
-                            <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{label}</span>
-                          </NavLink>
+                          <div key={to} style={{ position: 'relative', width: '100%' }}>
+                            <NavLink
+                              to={to}
+                              onClick={() => setDrawerOpen(false)}
+                              className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
+                              style={{ borderRadius: 12, padding: '0.75rem 1rem', flexDirection: 'column', alignItems: 'flex-start', gap: '0.4rem', width: '100%' }}
+                            >
+                              <Icon size={18} />
+                              <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{label}</span>
+                            </NavLink>
+                          </div>
+                        ))}
+                        {customCategories.map(cat => (
+                          <div key={cat} style={{ position: 'relative', width: '100%' }}>
+                            <NavLink
+                              to={`/admin/properties/${cat.toLowerCase()}`}
+                              onClick={() => setDrawerOpen(false)}
+                              className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
+                              style={{ borderRadius: 12, padding: '0.75rem 1rem', flexDirection: 'column', alignItems: 'flex-start', gap: '0.4rem', width: '100%' }}
+                            >
+                              <Building2 size={18} />
+                              <span style={{ fontSize: '0.875rem', fontWeight: 600, width: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat}</span>
+                            </NavLink>
+                            <button
+                              onClick={(e) => handleDeleteCustom(e, cat)}
+                              style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--admin-text-muted)' }}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         ))}
                       </div>
                     </motion.div>
