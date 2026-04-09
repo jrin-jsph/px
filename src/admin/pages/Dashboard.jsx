@@ -126,8 +126,7 @@ export default function Dashboard() {
       ) : (
         <>
           {/* Charts Row */}
-          <div className={styles.chartsGrid} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)', gap: '1.5rem' }}>
-            <style>{`@media(max-width:767px){.charts-grid{grid-template-columns:1fr!important}}`}</style>
+          <div className={`${styles.chartsGrid} admin-charts-grid`} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)', gap: '1.5rem' }}>
 
             {/* Donut / Pie */}
             <motion.div className={styles.glassCard} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}>
@@ -139,9 +138,9 @@ export default function Dashboard() {
                       data={pieData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={60}
-                      outerRadius={90}
-                      paddingAngle={5}
+                      innerRadius="38%"
+                      outerRadius="58%"
+                      paddingAngle={4}
                       dataKey="value"
                       onMouseEnter={(_, index) => setActiveIndex(index)}
                       onMouseLeave={() => setActiveIndex(null)}
