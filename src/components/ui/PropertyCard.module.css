@@ -118,20 +118,20 @@
     grid-template-rows: 200px 100px;
     height: auto;
   }
-  
+
   .galleryMain {
     grid-column: 1 / -1;
     grid-row: 1 / 2;
   }
-  
+
   .content {
     padding: 1.5rem;
   }
-  
+
   .price {
     font-size: 1.8rem;
   }
-  
+
   .features {
     gap: 1rem;
     flex-wrap: wrap;

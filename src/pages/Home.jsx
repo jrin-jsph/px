@@ -10,7 +10,7 @@ import styles from './Home.module.css';
 
 const CountUp = ({ end, decimals = 0, suffix = "" }) => {
   const ref = React.useRef(null);
-  
+
   React.useEffect(() => {
     let animationFrameId;
     const duration = 2000;
@@ -43,9 +43,9 @@ const CountUp = ({ end, decimals = 0, suffix = "" }) => {
       },
       { threshold: 0.1 }
     );
-    
+
     if (ref.current) observer.observe(ref.current);
-    
+
     return () => {
       window.cancelAnimationFrame(animationFrameId);
       observer.disconnect();
@@ -57,6 +57,15 @@ const CountUp = ({ end, decimals = 0, suffix = "" }) => {
 
 export default function Home() {
   const [featured, setFeatured] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   // Review Modal State
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -69,19 +78,19 @@ export default function Home() {
   const handleSubmitReview = () => {
     const errors = {
       rating: reviewForm.rating === 0,
-      name:   !reviewForm.name.trim(),
-      text:   !reviewForm.text.trim(),
+      name: !reviewForm.name.trim(),
+      text: !reviewForm.text.trim(),
     };
     setReviewErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
     setUserTestimonials(prev => [...prev, {
-      id:     Date.now(),
-      name:   reviewForm.name.trim(),
-      role:   reviewForm.role.trim() || 'Client',
-      text:   reviewForm.text.trim(),
+      id: Date.now(),
+      name: reviewForm.name.trim(),
+      role: reviewForm.role.trim() || 'Client',
+      text: reviewForm.text.trim(),
       rating: reviewForm.rating,
-      img:    null,
+      img: null,
     }]);
     setReviewForm({ rating: 0, name: '', role: '', text: '' });
     setHoveredStar(0);
@@ -142,26 +151,26 @@ export default function Home() {
       {/* Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <motion.h1 
+          <motion.h1
             className={styles.heroTitle}
-            initial={{ y: 30, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             Find Your Perfect Property
           </motion.h1>
-          <motion.p 
+          <motion.p
             className={styles.heroSubtitle}
-            initial={{ y: 30, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             Discover premium real estate, curated exclusively by our expert team. Experience seamless living in the home of your dreams.
           </motion.p>
-          <motion.div 
+          <motion.div
             className={styles.heroCtas}
-            initial={{ y: 30, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Link to="/properties" className={`btn ${styles.btnPrimary}`}>Explore Properties</Link>
@@ -173,8 +182,8 @@ export default function Home() {
       {/* Featured Properties */}
       <section className="section" style={{ backgroundColor: 'var(--color-surface)' }}>
         <div className="container">
-          <motion.div 
-            className="section-header flex-between" 
+          <motion.div
+            className="section-header flex-between"
             style={{ textAlign: 'left', marginBottom: '3rem' }}
             variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
           >
@@ -185,9 +194,9 @@ export default function Home() {
             <Link to="/properties" className="btn btn-outline">View All Listings</Link>
           </motion.div>
 
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))' }}>
+          <div className={`grid ${styles.featuredGrid}`}>
             {featured.map((prop, index) => (
-              <motion.div 
+              <motion.div
                 key={prop.id}
                 variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
                 transition={{ delay: index * 0.1 }}
@@ -202,12 +211,12 @@ export default function Home() {
       {/* Stats Section */}
       <section className="section">
         <div className="container" style={{ padding: '2rem 0' }}>
-          <motion.div 
+          <motion.div
             className={styles.bentoGrid}
             variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
           >
             <div className={styles.bentoCol}>
-              <motion.div 
+              <motion.div
                 className={`${styles.statCard} ${styles.bgPurple}`}
                 initial={{ x: -100, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -221,7 +230,7 @@ export default function Home() {
                   <p>Properties Sold</p>
                 </div>
               </motion.div>
-              <motion.div 
+              <motion.div
                 className={`${styles.statCard} ${styles.bgBlack}`}
                 initial={{ y: 100, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
@@ -236,9 +245,9 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-            
+
             <div className={`${styles.bentoCol} ${styles.bentoOffset1}`}>
-              <motion.div 
+              <motion.div
                 className={`${styles.statCard} ${styles.bgTeal}`}
                 initial={{ y: -100, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
@@ -255,7 +264,7 @@ export default function Home() {
             </div>
 
             <div className={`${styles.bentoCol} ${styles.bentoOffset2}`}>
-              <motion.div 
+              <motion.div
                 className={`${styles.statCard} ${styles.bgGreen}`}
                 initial={{ x: 100, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -277,7 +286,7 @@ export default function Home() {
       {/* Why Choose Us */}
       <section className="section" style={{ backgroundColor: 'var(--color-surface)' }}>
         <div className="container">
-          <motion.div 
+          <motion.div
             className="section-header" style={{ textAlign: 'center' }}
             variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
           >
@@ -291,7 +300,7 @@ export default function Home() {
               { icon: Handshake, title: 'Trusted Listings', desc: "We don't allow external agents. All properties are exclusively managed by our dedicated team." },
               { icon: Headphones, title: 'Expert Support', desc: 'Our real estate experts guide you through every step of the buying or renting process.' }
             ].map((feat, i) => (
-              <motion.div 
+              <motion.div
                 key={i} className={styles.featureItemMain}
                 variants={revealVariants} initial="hidden" whileInView="visible" viewport={revealViewport}
                 transition={{ delay: i * 0.1 }}
@@ -322,7 +331,7 @@ export default function Home() {
               {[...testimonials, ...userTestimonials, ...testimonials, ...userTestimonials].map((t, idx) => (
                 <div key={idx} className={styles.testimonialCard}>
                   <div className={styles.stars}>
-                    {[1,2,3,4,5].map(v => (
+                    {[1, 2, 3, 4, 5].map(v => (
                       <Star key={v} size={16} fill={v <= (t.rating || 5) ? 'currentColor' : 'none'} style={{ opacity: v <= (t.rating || 5) ? 1 : 0.25 }} />
                     ))}
                   </div>
@@ -417,6 +426,22 @@ export default function Home() {
               </motion.div>
             ) : (
               <>
+                {/* ← Back button — always visible at top */}
+                <button
+                  onClick={() => { setShowReviewModal(false); setReviewSubmitted(false); }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                    background: 'rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.1)',
+                    borderRadius: '40px', padding: '0.45rem 1rem',
+                    fontSize: '0.82rem', fontWeight: 600, color: '#444',
+                    cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
+                    marginBottom: '1.25rem', transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background='#1a1a1a'; e.currentTarget.style.color='#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background='rgba(0,0,0,0.06)'; e.currentTarget.style.color='#444'; }}
+                >
+                  ← Back
+                </button>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.04em', marginBottom: '0.25rem' }}>Share Your Experience</h3>
                 <p style={{ color: '#555', fontWeight: 300, marginBottom: '2rem', fontSize: '0.9rem' }}>Tell others about your journey with Property Express.</p>
 
@@ -540,26 +565,38 @@ export default function Home() {
               <div className={styles.locDotInner}></div>
             </div>
           </div>
-          
+
           {/* Re-using first featured property for map pins */}
           {featured.length > 0 && (
             <>
-              <GtaMarker property={featured[0]} style={{ top: '5%', left: '3%' }} delay={0.15} />
-              <GtaMarker property={featured[1]} style={{ top: '32%', left: '18%' }} delay={0.25} />
-              <GtaMarker property={featured[2]} style={{ top: '60%', left: '5%' }} delay={0.55} />
-              <GtaMarker property={featured[0]} style={{ top: '85%', left: '22%' }} delay={0.65} />
-              <GtaMarker property={featured[1]} style={{ top: '6%', left: '75%' }} delay={0.75} />
-              <GtaMarker property={featured[2]} style={{ top: '25%', left: '55%' }} delay={0.35} />
-              <GtaMarker property={featured[0]} style={{ top: '44%', left: '82%' }} delay={0.45} />
-              <GtaMarker property={featured[1]} style={{ top: '75%', left: '52%' }} delay={0.6} />
-              <GtaMarker property={featured[2]} style={{ top: '80%', left: '80%' }} delay={0.7} />
+              {/* Mobile: max 4 pins, evenly spread, no overlap */}
+              {isMobile ? (
+                <>
+                  <GtaMarker property={featured[0]} style={{ top: '12%', left: '4%' }}  delay={0.15} mobileCompact />
+                  <GtaMarker property={featured[1]} style={{ top: '12%', right: '4%' }} delay={0.25} mobileCompact />
+                  <GtaMarker property={featured[2]} style={{ top: '55%', left: '4%' }}  delay={0.35} mobileCompact />
+                  <GtaMarker property={featured[0]} style={{ top: '55%', right: '4%' }} delay={0.45} mobileCompact />
+                </>
+              ) : (
+                <>
+                  <GtaMarker property={featured[0]} style={{ top: '5%',  left: '3%'  }} delay={0.15} />
+                  <GtaMarker property={featured[1]} style={{ top: '32%', left: '18%' }} delay={0.25} />
+                  <GtaMarker property={featured[2]} style={{ top: '60%', left: '5%'  }} delay={0.55} />
+                  <GtaMarker property={featured[0]} style={{ top: '85%', left: '22%' }} delay={0.65} />
+                  <GtaMarker property={featured[1]} style={{ top: '6%',  left: '75%' }} delay={0.75} />
+                  <GtaMarker property={featured[2]} style={{ top: '25%', left: '55%' }} delay={0.35} />
+                  <GtaMarker property={featured[0]} style={{ top: '44%', left: '82%' }} delay={0.45} />
+                  <GtaMarker property={featured[1]} style={{ top: '75%', left: '52%' }} delay={0.60} />
+                  <GtaMarker property={featured[2]} style={{ top: '80%', left: '80%' }} delay={0.70} />
+                </>
+              )}
             </>
           )}
         </div>
 
         <div className={`container ${styles.mapCtaContent}`}>
           <h2 className={styles.mapCtaTitle}>Explore Nearby Homes</h2>
-          <p className={styles.mapCtaSubtitle}>Browse available homes near you and explore<br/>listings in your favorite areas.</p>
+          <p className={styles.mapCtaSubtitle}>Browse available homes near you and explore<br />listings in your favorite areas.</p>
           <div className={styles.mapCtaBtnWrap}>
             <div className={styles.ctaRadar1}></div>
             <div className={styles.ctaRadar2}></div>

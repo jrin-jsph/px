@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Building, Store, Map } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
@@ -78,6 +78,7 @@ export default function Properties() {
             </section>
 
             <section className="section" style={{ paddingTop: '4rem' }}>
+              {/* ── Desktop grid (hidden on mobile via CSS) ──── */}
               <div className="container">
                 <div className={styles.catGrid}>
                   {CATEGORIES.map((cat, i) => (
@@ -95,11 +96,8 @@ export default function Properties() {
                       onKeyDown={(e) => e.key === 'Enter' && handleSelectCategory(cat)}
                     >
                       <div className={styles.catCard}>
-                        {/* Background image */}
                         <img src={cat.img} alt={cat.title} className={styles.catBgImg} />
                         <div className={styles.catOverlay} />
-
-                        {/* Content */}
                         <div className={styles.catContent}>
                           <div className={styles.catIconWrap}>
                             <cat.icon size={28} />
@@ -112,6 +110,29 @@ export default function Properties() {
                     </motion.div>
                   ))}
                 </div>
+              </div>
+
+              {/* ── Mobile horizontal scroll-snap row (hidden on desktop) ── */}
+              <div className={styles.catScrollRow}>
+                {CATEGORIES.map((cat) => (
+                  <div
+                    key={cat.id}
+                    className={styles.catScrollCardWrap}
+                    onClick={() => handleSelectCategory(cat)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSelectCategory(cat)}
+                  >
+                    <div className={styles.catScrollCard}>
+                      <img src={cat.img} alt={cat.title} className={styles.catScrollBgImg} />
+                      <div className={styles.catScrollScrim} />
+                      <div className={styles.catScrollLabel}>
+                        <span className={styles.catScrollTitle}>{cat.title}</span>
+                        <span className={styles.catScrollDesc}>{cat.desc}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           </motion.div>
