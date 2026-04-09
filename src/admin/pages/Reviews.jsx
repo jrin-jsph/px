@@ -127,7 +127,7 @@ export default function Reviews() {
 
                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', borderTop: '1px solid var(--admin-stroke)', paddingTop: '1.5rem' }}>
                   {activeTab !== 'Approved' && (
-                    <button onClick={() => updateStatus(review.id, 'Approved')} className="btn" style={{ flex: 1, background: 'transparent', borderColor: '#18181a', color: '#18181a' }}>
+                    <button onClick={() => updateStatus(review.id, 'Approved')} className="btn" style={{ flex: 1, background: 'transparent', border: '1px solid var(--admin-text-main)', color: 'var(--admin-text-main)' }}>
                       <Check size={16} style={{ marginRight: '0.5rem' }} /> Approve
                     </button>
                   )}

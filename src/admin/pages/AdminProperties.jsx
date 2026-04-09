@@ -180,7 +180,7 @@ export default function AdminProperties() {
   };
 
   const SectionHeading = ({ children }) => (
-    <h3 style={{ fontSize: '0.8rem', fontWeight: 700, color: '#555555', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--admin-stroke)', paddingBottom: '0.5rem', marginBottom: '1.25rem', marginTop: '2rem' }}>
+    <h3 style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--admin-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--admin-stroke)', paddingBottom: '0.5rem', marginBottom: '1.25rem', marginTop: '2rem' }}>
       {children}
     </h3>
   );

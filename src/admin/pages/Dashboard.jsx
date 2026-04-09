@@ -6,54 +6,24 @@ import { ArrowRight } from 'lucide-react';
 import styles from '../styles/admin.module.css';
 
 const StatCard = ({ title, value, icon, to }) => {
-  const [count, setCount] = useState(0);
-  const [startCount, setStartCount] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!startCount) return;
-    let start = 0;
-    const duration = 1500;
-    const increment = value / (duration / 16);
-    
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= value) {
-        setCount(value);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
-
-    return () => clearInterval(timer);
-  }, [value, startCount]);
 
   return (
     <motion.div 
       onClick={() => navigate(to)}
-      onAnimationComplete={() => setStartCount(true)}
       variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }}
       className={styles.glassCard}
       style={{ borderTop: '4px solid #3f41a5', position: 'relative', cursor: 'pointer', overflow: 'hidden' }}
-      whileHover="hover"
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-        <h3 style={{ fontSize: '0.85rem', fontWeight: 300, color: 'var(--admin-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+        <h3 style={{ fontSize: '0.85rem', fontWeight: 300, color: 'var(--admin-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
           {title}
         </h3>
         <span style={{ fontSize: '1.25rem' }}>{icon}</span>
       </div>
       <div style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1 }}>
-        {count.toLocaleString()}
+        {value.toLocaleString()}
       </div>
-      <motion.div 
-        variants={{ hover: { x: 0, opacity: 1 }, initial: { x: -20, opacity: 0 } }}
-        initial="initial"
-        style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem', color: '#ed1b24' }}
-      >
-        <ArrowRight size={20} />
-      </motion.div>
     </motion.div>
   );
 };
