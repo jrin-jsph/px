@@ -171,28 +171,56 @@ export default function CategoryHero({ categoryId, categoryTitle, onBack }) {
             ← Back
           </motion.button>
 
-          {/* Floating images */}
-          {images.slice(0, 4).map((img, i) => (
-            <FloatingImage
-              key={img.id}
-              src={img.images[0]}
-              position={{ ...FLOAT_POSITIONS[i], isMobile }}
-              scrollProgress={scrollYProgress}
-              index={i}
-            />
-          ))}
+          {isMobile ? (
+            <div className={styles.mobileHeroLayout}>
+              <div className={styles.mobileHeroImages}>
+                {images.slice(0, 2).map((img, i) => (
+                  <motion.div 
+                    key={img.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.15 + 0.2 }}
+                    className={styles.mobileHeroImgWrap}
+                  >
+                    <img src={img.images[0]} alt="" className={styles.mobileHeroImg} />
+                  </motion.div>
+                ))}
+              </div>
+              <motion.div 
+                className={styles.mobileTitleContainer}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <h1 className={styles.mobileHeroTitleText}>{categoryTitle}</h1>
+              </motion.div>
+            </div>
+          ) : (
+            <>
+              {/* Floating images */}
+              {images.slice(0, 4).map((img, i) => (
+                <FloatingImage
+                  key={img.id}
+                  src={img.images[0]}
+                  position={{ ...FLOAT_POSITIONS[i], isMobile }}
+                  scrollProgress={scrollYProgress}
+                  index={i}
+                />
+              ))}
 
-          {/* Big category name */}
-          <motion.div
-            className={styles.heroTitle}
-            style={{
-              scale: springTitleScale,
-              opacity: springTitleOpacity,
-              y: springTitleY,
-            }}
-          >
-            {categoryTitle}
-          </motion.div>
+              {/* Big category name */}
+              <motion.div
+                className={styles.heroTitle}
+                style={{
+                  scale: springTitleScale,
+                  opacity: springTitleOpacity,
+                  y: springTitleY,
+                }}
+              >
+                {categoryTitle}
+              </motion.div>
+            </>
+          )}
 
 
         </div>
