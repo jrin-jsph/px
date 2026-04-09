@@ -40,9 +40,6 @@ export default function Sidebar() {
     <aside className={`${styles.sidebar} ${collapsed ? styles.sidebarCollapsed : ''}`}>
       <div className={styles.sidebarBrand}>
         <img src={logo} alt="Property Express" className={styles.logoFull} />
-        <div className={styles.logoIcon}>
-            <img src={logo} alt="PX" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'left' }} />
-        </div>
       </div>
 
       <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
