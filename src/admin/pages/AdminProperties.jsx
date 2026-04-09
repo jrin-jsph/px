@@ -6,11 +6,11 @@ import { FlatIcon, PlotIcon, WarehouseIcon, VillaIcon } from '../components/icon
 import styles from '../styles/admin.module.css';
 
 const MOCK_PROPERTIES = [
-  { id: 1, title: 'Skyline Penthouse', category: 'Flats', price: '₹4.5Cr', location: 'Downtown', status: 'Active', numericPrice: 45000000 },
-  { id: 2, title: 'Azure Villa', category: 'Villas', price: '₹8.0Cr', location: 'Suburbs', status: 'Active', numericPrice: 80000000 },
-  { id: 3, title: 'Oceanview Plot', category: 'Plots', price: '₹2.1Cr', location: 'Coastal', status: 'Inactive', numericPrice: 21000000 },
-  { id: 4, title: 'Industrial Hub', category: 'Warehouses', price: '₹12.0Cr', location: 'Outskirts', status: 'Active', numericPrice: 120000000 },
-  { id: 5, title: 'Modern Studio', category: 'Flats', price: '₹85L', location: 'Downtown', status: 'Active', numericPrice: 8500000 },
+  { id: 1, title: 'Skyline Penthouse', category: 'Flat', price: '45000000', area: '3200', bedrooms: '4', bathrooms: '3', location: 'Downtown', address: '12 Sky Tower, Downtown', status: 'Active', isFeatured: true, numericPrice: 45000000, agentName: 'Ravi Kumar', agentPhone: '+91 9876543210', agentPhoto: null, description: 'Stunning penthouse with panoramic city views.', amenities: ['Swimming Pool', 'Gym', 'Elevator'], mapsUrl: '' },
+  { id: 2, title: 'Azure Villa', category: 'Villa', price: '80000000', area: '8500', bedrooms: '6', bathrooms: '5', location: 'Suburbs', address: '45 Green Meadows, Suburbs', status: 'Active', isFeatured: false, numericPrice: 80000000, agentName: 'Priya Mehta', agentPhone: '+91 9876543211', agentPhoto: null, description: 'Luxury villa with private pool and garden.', amenities: ['Swimming Pool', '24/7 Security', 'Private Garage'], mapsUrl: '' },
+  { id: 3, title: 'Oceanview Plot', category: 'Plot', price: '21000000', area: '5000', bedrooms: '', bathrooms: '', location: 'Coastal', address: '78 Coastal Road, Marine Drive', status: 'Inactive', isFeatured: false, numericPrice: 21000000, agentName: 'Suresh Patel', agentPhone: '+91 9876543212', agentPhoto: null, description: 'Prime coastal plot with ocean views.', amenities: ['City Water Supply'], mapsUrl: '' },
+  { id: 4, title: 'Industrial Hub', category: 'Warehouse', price: '120000000', area: '25000', bedrooms: '', bathrooms: '', location: 'Outskirts', address: '1 Industrial Estate, Outskirts', status: 'Active', isFeatured: false, numericPrice: 120000000, agentName: 'Amit Shah', agentPhone: '+91 9876543213', agentPhoto: null, description: 'Large warehouse complex with loading docks.', amenities: ['Power Backup', 'CCTV', '24/7 Security'], mapsUrl: '' },
+  { id: 5, title: 'Modern Studio', category: 'Flat', price: '8500000', area: '650', bedrooms: '1', bathrooms: '1', location: 'Downtown', address: '5 Central Ave, Downtown', status: 'Active', isFeatured: true, numericPrice: 8500000, agentName: 'Ravi Kumar', agentPhone: '+91 9876543210', agentPhoto: null, description: 'Compact modern studio in city centre.', amenities: ['High-Speed Internet', 'CCTV'], mapsUrl: '' },
 ];
 
 const PRESET_AMENITIES = [
@@ -48,6 +48,35 @@ export default function AdminProperties() {
   const [formData, setFormData] = useState(initialForm);
   const [formErrors, setFormErrors] = useState([]);
   const [customAmenity, setCustomAmenity] = useState('');
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [showToast, setShowToast] = useState('');
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (editingId && selectedProperty) {
+      setFormData({
+        title:       selectedProperty.title,
+        category:    selectedProperty.category,
+        status:      selectedProperty.status,
+        isFeatured:  selectedProperty.isFeatured || false,
+        price:       selectedProperty.price,
+        area:        selectedProperty.area || '',
+        bedrooms:    selectedProperty.bedrooms || '',
+        bathrooms:   selectedProperty.bathrooms || '',
+        address:     selectedProperty.address || selectedProperty.location,
+        mapsUrl:     selectedProperty.mapsUrl || '',
+        agentName:   selectedProperty.agentName || '',
+        agentPhone:  selectedProperty.agentPhone || '',
+        agentPhoto:  selectedProperty.agentPhoto || null,
+        description: selectedProperty.description || '',
+        amenities:   selectedProperty.amenities || [],
+      });
+      setImages([]); // Images would load from property.imageUrls in a real backend
+    } else if (!editingId) {
+      setFormData(initialForm);
+      setImages([]);
+    }
+  }, [editingId, selectedProperty]);
 
   const pathSegments = location.pathname.split('/');
   const activeCategory = pathSegments[pathSegments.length - 1];
@@ -162,21 +191,35 @@ export default function AdminProperties() {
   };
 
   const handleSaveProperty = () => {
-    // Validation
     const required = ['title', 'category', 'status', 'price', 'area', 'address'];
     const newErrors = [];
-    required.forEach(req => {
-      if (!formData[req]) newErrors.push(req);
-    });
-    if (images.length === 0) newErrors.push('images');
+    required.forEach(req => { if (!formData[req]) newErrors.push(req); });
+    if (images.length === 0 && !editingId) newErrors.push('images');
     
     if (newErrors.length > 0) {
       setFormErrors(newErrors);
       return; 
     }
     
-    // Success simulation
+    if (editingId) {
+      // Update the property in local state
+      setProperties(prev => prev.map(p => p.id === editingId ? {
+        ...p,
+        title: formData.title,
+        category: formData.category,
+        status: formData.status,
+        location: formData.address,
+        numericPrice: parseInt(formData.price) || p.numericPrice,
+        price: `₹${(parseInt(formData.price) / 10000000).toFixed(1)}Cr`,
+      } : p));
+      setShowToast('Property updated successfully!');
+    } else {
+      setShowToast('Property saved successfully!');
+    }
+    
     setIsDrawerOpen(false);
+    setFormErrors([]);
+    setTimeout(() => setShowToast(''), 2500);
   };
 
   const SectionHeading = ({ children }) => (
@@ -202,6 +245,7 @@ export default function AdminProperties() {
   const isRoomApplicable = formData.category !== 'Plot' && formData.category !== 'Warehouse';
 
   return (
+    <>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', fontFamily: 'Outfit' }}>
       
       {/* Header Area */}
@@ -295,7 +339,12 @@ export default function AdminProperties() {
                     </td>
                     <td style={{ padding: '1rem', textAlign: 'right' }}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                        <button className={styles.iconBtn} onClick={() => { setIsDrawerOpen(true); setEditingId(prop.id); }}><Edit2 size={16} /></button>
+                        <button className={styles.iconBtn} onClick={() => { 
+                          setSelectedProperty(prop);
+                          setEditingId(prop.id); 
+                          setIsDrawerOpen(true); 
+                          setFormErrors([]);
+                        }}><Edit2 size={16} /></button>
                         <button className={styles.iconBtn} style={{ color: '#ed1b24' }}><Trash2 size={16} /></button>
                       </div>
                     </td>
@@ -512,7 +561,7 @@ export default function AdminProperties() {
 
               {/* Drawer Footer */}
               <div style={{ padding: '1.5rem 2.5rem', borderTop: '1px solid rgba(0,0,0,0.08)', background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', display: 'flex', gap: '1rem', position: 'sticky', bottom: 0 }}>
-                <button className="btn" onClick={() => setIsDrawerOpen(false)} style={{ background: 'transparent', color: '#555555', border: '1px solid var(--admin-stroke)', padding: '1rem 2rem', fontWeight: 600 }}>Cancel</button>
+                <button className="btn" onClick={() => setIsDrawerOpen(false)} style={{ background: 'transparent', color: 'var(--admin-text-muted)', border: '1px solid var(--admin-stroke)', padding: '1rem 2rem', fontWeight: 600 }}>Cancel</button>
                 <button className="btn" onClick={handleSaveProperty} style={{ background: '#ed1b24', color: 'white', border: 'none', padding: '1rem', fontWeight: 700, flex: 1, boxShadow: '0 8px 30px rgba(237,27,36,0.3)' }}>
                   {editingId ? 'Save Changes' : 'Save Property'}
                 </button>
@@ -522,5 +571,26 @@ export default function AdminProperties() {
         )}
       </AnimatePresence>
     </div>
+
+      {/* Success Toast */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }}
+            style={{
+              position: 'fixed', bottom: '5rem', right: '2rem', zIndex: 200,
+              background: 'var(--admin-glass-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid var(--admin-glass-border)', padding: '1rem 1.5rem',
+              borderRadius: 16, display: 'flex', alignItems: 'center', gap: '0.75rem',
+              fontWeight: 600, color: 'var(--admin-text-main)', boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}
+          >
+            <span style={{ background: '#2ecc71', color: 'white', borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', flexShrink: 0 }}>✓</span>
+            {showToast}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
+

@@ -125,7 +125,7 @@ export default function Sidebar() {
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: '#555555',
+            color: 'var(--admin-text-muted)',
             fontSize: '0.9rem',
             fontWeight: 600,
             fontFamily: 'Outfit, sans-serif',
@@ -133,7 +133,7 @@ export default function Sidebar() {
             padding: 0
           }}
           onMouseEnter={(e) => { e.currentTarget.style.color = '#ed1b24'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = '#555555'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--admin-text-muted)'; }}
         >
           {collapsed ? (
              <LogOut size={18} style={{ color: 'inherit' }} />

@@ -1,19 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { ArrowRight } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
 import styles from '../styles/admin.module.css';
 
+/* ─── Glass Tooltip for Charts ─── */
+const GlassTooltip = ({ active, payload, label, isDark }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: isDark ? 'rgba(20, 25, 40, 0.92)' : 'rgba(255,255,255,0.92)',
+      backdropFilter: 'blur(20px)',
+      border: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(255,255,255,0.75)',
+      borderRadius: 12,
+      padding: '10px 16px',
+      fontFamily: 'Outfit',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+      animation: 'fadeIn 0.15s ease',
+    }}>
+      {label && <p style={{ fontWeight: 700, fontSize: 13, color: 'var(--admin-text-main)', marginBottom: 4, marginTop: 0 }}>{label}</p>}
+      {payload.map((entry, i) => (
+        <p key={i} style={{ fontWeight: 300, fontSize: 13, color: 'var(--admin-text-muted)', margin: 0 }}>
+          {entry.name}: <strong style={{ color: 'var(--admin-text-main)', fontWeight: 700 }}>{entry.value}</strong>
+        </p>
+      ))}
+    </div>
+  );
+};
+
+/* ─── Stat Card ─── */
 const StatCard = ({ title, value, icon, to }) => {
   const navigate = useNavigate();
-
   return (
-    <motion.div 
+    <motion.div
       onClick={() => navigate(to)}
       variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }}
       className={styles.glassCard}
       style={{ borderTop: '4px solid #3f41a5', position: 'relative', cursor: 'pointer', overflow: 'hidden' }}
+      whileHover={{ y: -4, boxShadow: '0 12px 50px rgba(0,0,0,0.12)' }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
         <h3 style={{ fontSize: '0.85rem', fontWeight: 300, color: 'var(--admin-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
@@ -21,7 +47,7 @@ const StatCard = ({ title, value, icon, to }) => {
         </h3>
         <span style={{ fontSize: '1.25rem' }}>{icon}</span>
       </div>
-      <div style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1 }}>
+      <div style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, color: 'var(--admin-text-main)' }}>
         {value.toLocaleString()}
       </div>
     </motion.div>
@@ -30,11 +56,13 @@ const StatCard = ({ title, value, icon, to }) => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  // Using explicit fixed heights on charts + loading states
+  const { isDark } = useAdmin();
   const [loading, setLoading] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(null);
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 800); // Simulate network
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
   }, []);
 
   const pieData = [
@@ -51,7 +79,7 @@ export default function Dashboard() {
     { name: 'Dec', inquiries: 38 },
     { name: 'Jan', inquiries: 65 },
     { name: 'Feb', inquiries: 80 },
-    { name: 'Mar', inquiries: 110, fill: '#ed1b24' },
+    { name: 'Mar', inquiries: 110, highlight: true },
   ];
 
   const recentInquiries = [
@@ -62,22 +90,27 @@ export default function Dashboard() {
 
   const getStatusStyle = (status) => {
     switch(status) {
-      case 'New': return { background: 'rgba(24,24,26,0.1)', color: '#18181a' };
+      case 'New': return { background: 'rgba(237,27,36,0.1)', color: '#ed1b24' };
       case 'Responded': return { background: 'rgba(46,204,113,0.1)', color: '#2ecc71' };
-      case 'Closed': return { background: 'rgba(85,85,85,0.1)', color: '#555555' };
+      case 'Closed': return { background: 'rgba(128,128,128,0.1)', color: 'var(--admin-text-muted)' };
       default: return {};
     }
   };
 
-  const staggerContainer = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
-  const tableContainer = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
-  const tableRow = { hidden: { opacity: 0, x: -10 }, show: { opacity: 1, x: 0 } };
+  const staggerContainer = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
+  const tableVariants = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
+  const rowVariant = { hidden: { opacity: 0, x: -10 }, show: { opacity: 1, x: 0 } };
+
+  const totalPie = pieData.reduce((s, d) => s + d.value, 0);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      
-      {/* Cards Row */}
-      <motion.div variants={staggerContainer} initial="hidden" animate="show" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+
+      {/* Stat Cards */}
+      <motion.div
+        variants={staggerContainer} initial="hidden" animate="show"
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem' }}
+      >
         <StatCard title="Total Properties" value={142} icon="🏘️" to="/admin/properties" />
         <StatCard title="Total Inquiries" value={840} icon="📩" to="/admin/inquiries" />
         <StatCard title="Page Views" value={45200} icon="👁️" to="/admin/settings" />
@@ -86,39 +119,86 @@ export default function Dashboard() {
 
       {loading ? (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
-          <div className={styles.glassCard} style={{ height: 400, background: 'rgba(0,0,0,0.06)', animation: 'shimmer 2s infinite' }} />
-          <div className={styles.glassCard} style={{ height: 400, background: 'rgba(0,0,0,0.06)', animation: 'shimmer 2s infinite' }} />
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className={styles.glassCard} style={{ height: 380 }} />
+          ))}
         </div>
       ) : (
         <>
           {/* Charts Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
-            <motion.div className={styles.glassCard} initial={{opacity:0, y:20}} animate={{opacity:1, y:0}}>
-              <h3 style={{ marginBottom: '1.5rem', fontWeight: 600, letterSpacing: '-0.02em' }}>Properties by Category</h3>
-              <div style={{ height: 300 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)', gap: '1.5rem' }}>
+
+            {/* Donut / Pie */}
+            <motion.div className={styles.glassCard} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}>
+              <h3 style={{ marginBottom: '0.5rem', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--admin-text-main)' }}>Properties by Category</h3>
+              <div style={{ height: 300, position: 'relative' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={pieData} innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="value">
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={90}
+                      paddingAngle={5}
+                      dataKey="value"
+                      onMouseEnter={(_, index) => setActiveIndex(index)}
+                      onMouseLeave={() => setActiveIndex(null)}
+                    >
                       {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                          opacity={activeIndex === null || activeIndex === index ? 1 : 0.4}
+                          stroke="none"
+                        />
                       ))}
                     </Pie>
+                    <Tooltip content={<GlassTooltip isDark={isDark} />} />
                   </PieChart>
                 </ResponsiveContainer>
+                {/* Center label */}
+                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
+                  {activeIndex !== null ? (
+                    <>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--admin-text-main)', lineHeight: 1 }}>{pieData[activeIndex].value}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)', marginTop: 2 }}>{pieData[activeIndex].name}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--admin-text-main)', lineHeight: 1 }}>{totalPie}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-muted)', marginTop: 2 }}>Total</div>
+                    </>
+                  )}
+                </div>
+              </div>
+              {/* Legend */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1rem', marginTop: '0.5rem' }}>
+                {pieData.map((d, i) => (
+                  <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: COLORS[i] }} />
+                    <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)', fontWeight: 300 }}>{d.name}</span>
+                  </div>
+                ))}
               </div>
             </motion.div>
 
-            <motion.div className={styles.glassCard} initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.1}}>
-              <h3 style={{ marginBottom: '1.5rem', fontWeight: 600, letterSpacing: '-0.02em' }}>Inquiries (Last 6 Months)</h3>
-              <div style={{ height: 300 }}>
+            {/* Bar Chart */}
+            <motion.div className={styles.glassCard} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: 0.1 }}>
+              <h3 style={{ marginBottom: '1.5rem', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--admin-text-main)' }}>Inquiries (Last 6 Months)</h3>
+              <div style={{ height: 280 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--admin-stroke)" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--admin-text-muted)'}} />
-                    <YAxis axisLine={false} tickLine={false} tick={{fill: 'var(--admin-text-muted)'}} />
-                    <Bar dataKey="inquiries" radius={[4, 4, 0, 0]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'} />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--admin-text-muted)', fontFamily: 'Outfit', fontSize: 12, fontWeight: 300 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--admin-text-muted)', fontFamily: 'Outfit', fontSize: 12, fontWeight: 300 }} />
+                    <Tooltip
+                      content={<GlassTooltip isDark={isDark} />}
+                      cursor={{ fill: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)', radius: 8 }}
+                    />
+                    <Bar dataKey="inquiries" radius={[6, 6, 0, 0]}>
                       {barData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill || '#18181a'} />
+                        <Cell key={`bar-${index}`} fill={entry.highlight ? '#ed1b24' : (isDark ? '#444' : '#18181a')} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -127,45 +207,35 @@ export default function Dashboard() {
             </motion.div>
           </div>
 
-          {/* Table Row */}
-          <motion.div className={styles.glassCard} initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.2}}>
+          {/* Recent Inquiries Table */}
+          <motion.div className={styles.glassCard} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: 0.2 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>Recent Inquiries</h3>
-              <Link to="/admin/inquiries" style={{ fontWeight: 300, color: 'var(--admin-text-main)', textDecoration: 'underline' }}>View All</Link>
+              <h3 style={{ fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--admin-text-main)', margin: 0 }}>Recent Inquiries</h3>
+              <Link to="/admin/inquiries" style={{ fontWeight: 300, color: 'var(--admin-text-muted)', textDecoration: 'underline', fontSize: '0.9rem' }}>View All</Link>
             </div>
             <div style={{ overflowX: 'auto' }}>
-              <motion.table variants={tableContainer} initial="hidden" animate="show" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+              <motion.table variants={tableVariants} initial="hidden" animate="show" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid var(--admin-stroke)' }}>
-                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--admin-text-muted)', fontSize: '0.85rem' }}>Name</th>
-                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--admin-text-muted)', fontSize: '0.85rem' }}>Property</th>
-                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--admin-text-muted)', fontSize: '0.85rem' }}>Phone</th>
-                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--admin-text-muted)', fontSize: '0.85rem' }}>Date</th>
-                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--admin-text-muted)', fontSize: '0.85rem' }}>Status</th>
+                  <tr style={{ borderBottom: `1px solid var(--admin-stroke)` }}>
+                    {['Name', 'Property', 'Phone', 'Date', 'Status'].map(h => (
+                      <th key={h} style={{ padding: '1rem', fontWeight: 600, color: 'var(--admin-text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
                   {recentInquiries.map((inq, i) => (
-                    <motion.tr 
+                    <motion.tr
                       key={inq.id}
-                      variants={tableRow}
+                      variants={rowVariant}
                       onClick={() => navigate(`/admin/inquiries?expanded=${inq.id}`)}
-                      style={{ borderBottom: '1px solid var(--admin-stroke)', background: i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.02)', cursor: 'pointer' }}
+                      style={{ borderBottom: `1px solid var(--admin-stroke)`, background: i % 2 === 0 ? 'transparent' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)'), cursor: 'pointer' }}
                     >
-                      <td style={{ padding: '1rem', fontWeight: 500 }}>{inq.name}</td>
+                      <td style={{ padding: '1rem', fontWeight: 500, color: 'var(--admin-text-body)' }}>{inq.name}</td>
                       <td style={{ padding: '1rem', fontWeight: 300, color: 'var(--admin-text-muted)' }}>{inq.property}</td>
-                      <td style={{ padding: '1rem', fontWeight: 400, fontVariantNumeric: 'tabular-nums' }}>{inq.phone}</td>
-                      <td style={{ padding: '1rem', fontWeight: 400, fontVariantNumeric: 'tabular-nums', color: 'var(--admin-text-muted)' }}>{inq.date}</td>
+                      <td style={{ padding: '1rem', fontWeight: 400, color: 'var(--admin-text-body)', fontVariantNumeric: 'tabular-nums' }}>{inq.phone}</td>
+                      <td style={{ padding: '1rem', fontWeight: 300, color: 'var(--admin-text-muted)', fontVariantNumeric: 'tabular-nums' }}>{inq.date}</td>
                       <td style={{ padding: '1rem' }}>
-                        <span style={{ 
-                          padding: '0.35rem 0.85rem', 
-                          borderRadius: '20px', 
-                          fontSize: '0.75rem', 
-                          fontWeight: 700, 
-                          textTransform: 'uppercase', 
-                          letterSpacing: '0.08em',
-                          ...getStatusStyle(inq.status) 
-                        }}>
+                        <span style={{ padding: '0.3rem 0.8rem', borderRadius: 20, fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', ...getStatusStyle(inq.status) }}>
                           {inq.status}
                         </span>
                       </td>
@@ -178,6 +248,7 @@ export default function Dashboard() {
         </>
       )}
 
+      <style>{`@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }`}</style>
     </div>
   );
 }
