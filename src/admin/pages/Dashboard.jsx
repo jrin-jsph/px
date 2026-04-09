@@ -133,7 +133,6 @@ export default function Dashboard() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)', borderRadius: '12px' }}/>
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -147,7 +146,6 @@ export default function Dashboard() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--admin-stroke)" />
                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--admin-text-muted)'}} />
                     <YAxis axisLine={false} tickLine={false} tick={{fill: 'var(--admin-text-muted)'}} />
-                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.02)'}} contentStyle={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)', borderRadius: '12px' }}/>
                     <Bar dataKey="inquiries" radius={[4, 4, 0, 0]}>
                       {barData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.fill || '#18181a'} />

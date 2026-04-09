@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Users, MessageSquare, Star, Settings, Link, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Star, Settings, Link as LinkIcon, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { FlatIcon, VillaIcon, PlotIcon, WarehouseIcon } from './icons/PropertyIcons';
 import { useAdmin } from '../context/AdminContext';
 import styles from '../styles/admin.module.css';
@@ -9,7 +9,13 @@ import logo from '../../assets/logo.png';
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
-  const { sections } = useAdmin();
+  const { sections, logout } = useAdmin();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/admin'); // Assuming /admin redirects to login naturally when unauthenticated
+  };
 
   const NavItem = ({ to, icon: Icon, label }) => (
     <NavLink 
@@ -32,26 +38,11 @@ export default function Sidebar() {
 
   return (
     <aside className={`${styles.sidebar} ${collapsed ? styles.sidebarCollapsed : ''}`}>
-      <div className={styles.sidebarBrand} style={{ position: 'relative', overflow: 'hidden', padding: collapsed ? '0 0.5rem 1rem' : '0 1.5rem 2rem', justifyContent: collapsed ? 'center' : 'flex-start' }}>
-        <AnimatePresence mode="wait">
-          {!collapsed ? (
-            <motion.img 
-              key="full-logo"
-              src={logo} 
-              alt="Property Express" 
-              initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, display: 'none'}}
-              style={{ height: 32, objectFit: 'contain', maxWidth: '100%' }} 
-            />
-          ) : (
-            <motion.div 
-              key="icon-logo"
-              initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, display: 'none'}}
-              style={{ width: 32, height: 32, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}
-            >
-              <img src={logo} alt="PX" style={{ height: 32, objectFit: 'cover', objectPosition: 'left' }} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <div className={styles.sidebarBrand}>
+        <img src={logo} alt="Property Express" className={styles.logoFull} />
+        <div className={styles.logoIcon}>
+            <img src={logo} alt="PX" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'left' }} />
+        </div>
       </div>
 
       <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
@@ -105,7 +96,7 @@ export default function Sidebar() {
           <AnimatePresence>
             {sections.showContactForm && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
-                 <NavItem to="/admin/contact-social" icon={Link} label="Contact & Social" />
+                 <NavItem to="/admin/contact-social" icon={LinkIcon} label="Contact & Social" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -113,9 +104,48 @@ export default function Sidebar() {
         </div>
       </nav>
 
-      <div style={{ padding: '1rem', borderTop: '1px solid var(--admin-stroke)', display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end' }}>
+      {/* Bottom Actions Profile/Logout */}
+      <div style={{ 
+        padding: '1rem 1.25rem', 
+        borderTop: '1px solid rgba(0,0,0,0.08)', 
+        display: 'flex', 
+        flexDirection: collapsed ? 'column' : 'row',
+        alignItems: 'center', 
+        justifyContent: collapsed ? 'center' : 'space-between',
+        gap: collapsed ? '1rem' : '0'
+      }}>
         <button onClick={() => setCollapsed(!collapsed)} className={styles.iconBtn} style={{ background: 'rgba(0,0,0,0.05)', borderRadius: '50%', padding: '0.5rem' }}>
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        </button>
+
+        <button 
+          onClick={handleLogout}
+          title={collapsed ? "Logout" : ""}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            color: '#555555',
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            fontFamily: 'Outfit, sans-serif',
+            transition: 'color 0.2s ease',
+            padding: 0
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#ed1b24'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = '#555555'; }}
+        >
+          {collapsed ? (
+             <LogOut size={18} style={{ color: 'inherit' }} />
+          ) : (
+            <>
+              <LogOut size={18} style={{ color: 'inherit' }} />
+              <span style={{ color: 'inherit' }}>Logout</span>
+            </>
+          )}
         </button>
       </div>
     </aside>

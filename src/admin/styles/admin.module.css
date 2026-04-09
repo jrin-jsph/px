@@ -65,12 +65,50 @@
 
 .sidebarBrand {
   padding: 0 1.5rem 2rem;
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: -0.04em;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  position: relative;
+  height: 90px;
+  overflow: hidden;
+  transition: padding 0.3s ease;
+}
+
+.sidebarCollapsed .sidebarBrand {
+  padding: 0;
+  justify-content: center;
+}
+
+/* Smooth crossfade between full logo and icon */
+.logoFull {
+  opacity: 1;
+  width: 160px;
+  height: auto;
+  transition: opacity 0.25s ease, width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  object-fit: contain;
+}
+
+.logoIcon {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 36px;
+  transition: opacity 0.25s ease, width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  object-fit: contain;
+  object-position: left;
+  transform: scale(2.2) translateX(-38%);
+}
+
+.sidebarCollapsed .logoFull {
+  opacity: 0;
+  width: 0;
+}
+
+.sidebarCollapsed .logoIcon {
+  opacity: 1;
+  width: 36px;
+  position: static;
+  /* Centering adjustment for the crop */
+  transform: scale(2.2) translateX(-20%);
 }
 
 .navGroup {
