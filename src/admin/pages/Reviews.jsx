@@ -67,18 +67,18 @@ export default function Reviews() {
         </div>
 
         {/* Search + Filter Row */}
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', flex: '1 1 180px', minWidth: 0 }}>
-            <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }} />
+            <Search size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }} />
             <input
               type="text" placeholder="Search reviews..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-              style={{ width: '100%', paddingLeft: '2.5rem', fontSize: '0.85rem', boxSizing: 'border-box' }}
+              style={{ width: '100%', height: 40, paddingLeft: '2.5rem', paddingRight: '2rem', fontSize: '0.85rem', boxSizing: 'border-box', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: 'var(--admin-text-main)' }}
             />
-            {searchTerm && <X size={14} onClick={() => setSearchTerm('')} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--admin-text-muted)' }} />}
+            {searchTerm && <X size={14} onClick={() => setSearchTerm('')} style={{ position: 'absolute', right: '0.875rem', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--admin-text-muted)' }} />}
           </div>
 
           <select value={ratingFilter} onChange={e => setRatingFilter(e.target.value)}
-            style={{ flex: '0 1 auto', padding: '0.6rem 0.75rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600, fontSize: '0.85rem', color: 'var(--admin-text-main)' }}
+            style={{ height: 40, padding: '0 0.75rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600, fontSize: '0.85rem', color: 'var(--admin-text-main)', fontFamily: 'Outfit, sans-serif', flexShrink: 0 }}
           >
             <option value="All">All Stars</option>
             <option value="5">⭐⭐⭐⭐⭐</option>
