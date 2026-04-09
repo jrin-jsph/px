@@ -89,7 +89,7 @@ export default function AdminProperties() {
     const timer = setTimeout(() => {
       let filteredDb = MOCK_PROPERTIES;
       if (activeCategory !== 'properties') {
-        const catMap = { flats: 'Flats', plots: 'Plots', warehouses: 'Warehouses', villas: 'Villas' };
+        const catMap = { flats: 'Flat', plots: 'Plot', warehouses: 'Warehouse', villas: 'Villa' };
         filteredDb = MOCK_PROPERTIES.filter(p => p.category === catMap[activeCategory]);
       }
       setProperties(filteredDb);
@@ -267,20 +267,22 @@ export default function AdminProperties() {
           <h2 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.04em', margin: 0 }}>{getPageTitle()}</h2>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <button 
-            className="btn" 
-            style={{ background: 'var(--admin-glass-bg)', border: '1px solid var(--admin-stroke)', padding: '0.75rem 1rem', fontWeight: 600, cursor: 'pointer' }}
-            onClick={() => {
-              const newCat = window.prompt("Enter new custom category name:");
-              if (newCat && newCat.trim() && !customCategories.includes(newCat.trim())) {
-                setCustomCategories(prev => [...prev, newCat.trim()]);
-                setShowToast('Custom category added!');
-                setTimeout(() => setShowToast(''), 2500);
-              }
-            }}
-          >
-            + Custom Type
-          </button>
+          {activeCategory === 'properties' && (
+            <button 
+              className="btn" 
+              style={{ background: 'var(--admin-glass-bg)', border: '1px solid var(--admin-stroke)', padding: '0.75rem 1rem', fontWeight: 600, cursor: 'pointer' }}
+              onClick={() => {
+                const newCat = window.prompt("Enter new custom category name:");
+                if (newCat && newCat.trim() && !customCategories.includes(newCat.trim())) {
+                  setCustomCategories(prev => [...prev, newCat.trim()]);
+                  setShowToast('Custom category added!');
+                  setTimeout(() => setShowToast(''), 2500);
+                }
+              }}
+            >
+              + Custom Type
+            </button>
+          )}
           <button 
             className="btn" 
             style={{ background: '#ed1b24', color: 'white', border: 'none', padding: '0.75rem 1.5rem', fontWeight: 700, cursor: 'pointer' }}
@@ -306,14 +308,16 @@ export default function AdminProperties() {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
-          <select value={catFilter} onChange={e => setCatFilter(e.target.value)} style={{ flex: '1 1 120px', height: 40, padding: '0 0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
-             <option value="All">Category: All</option>
-             <option value="Flat">Flat</option>
-             <option value="Villa">Villa</option>
-             <option value="Warehouse">Warehouse</option>
-             <option value="Plot">Plot</option>
-             {customCategories.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          {activeCategory === 'properties' && (
+            <select value={catFilter} onChange={e => setCatFilter(e.target.value)} style={{ flex: '1 1 120px', height: 40, padding: '0 0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
+               <option value="All">Category: All</option>
+               <option value="Flat">Flat</option>
+               <option value="Villa">Villa</option>
+               <option value="Warehouse">Warehouse</option>
+               <option value="Plot">Plot</option>
+               {customCategories.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          )}
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ flex: '1 1 120px', height: 40, padding: '0 0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
             <option value="All">Status: All</option>
             <option value="Active">Active</option>
