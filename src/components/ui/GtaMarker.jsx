@@ -4,8 +4,25 @@ import { motion } from 'framer-motion';
 import { Home } from 'lucide-react';
 import styles from './GtaMarker.module.css';
 
-export default function GtaMarker({ property, style, delay }) {
+export default function GtaMarker({ property, style, delay, mobileCompact }) {
   const { id, price, images, title } = property;
+
+  if (mobileCompact) {
+    return (
+      <motion.div
+        className={`${styles.gtaMarker} ${styles.gtaMarkerCompact}`}
+        style={style}
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0 }}
+        transition={{ delay: delay, duration: 0.4 }}
+      >
+        <Link to={`/properties/${id}`} className={styles.compactPin}>
+          ${price.toLocaleString()}
+        </Link>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

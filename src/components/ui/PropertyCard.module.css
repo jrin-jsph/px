@@ -120,7 +120,8 @@
 
   .imgGallery {
     display: block;
-    height: 220px;
+    aspect-ratio: 16/9;
+    height: auto;
     width: 100%;
   }
 
@@ -136,7 +137,8 @@
 
   .propertyImg {
     width: 100%;
-    height: 220px;
+    height: 100%;
+    aspect-ratio: 16/9;
     object-fit: cover;
   }
 

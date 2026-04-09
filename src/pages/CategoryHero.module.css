@@ -350,12 +350,27 @@
 
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 768px) {
+  .heroPanel {
+    height: 100vh; /* Disable extra scrolling space on mobile */
+  }
+
+  /* Make floating images larger and wider */
   .floatingImg {
-    width: clamp(140px, 38vw, 220px);
+    width: clamp(240px, 80vw, 360px); 
   }
 
   .heroTitle {
-    font-size: clamp(3.5rem, 18vw, 8rem);
+    font-size: clamp(4rem, 18vw, 8rem);
+    z-index: 20; /* Keep it above images when scaling */
+  }
+
+  .listingsSection {
+    padding: 2rem 1.5rem 6rem;
+    margin-top: 0;
+  }
+
+  .listingsHeader h2 {
+    font-size: 2.25rem; /* ~text-4xl equivalent */
   }
 
   .listingsGrid {

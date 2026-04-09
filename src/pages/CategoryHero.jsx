@@ -16,11 +16,12 @@ const FLOAT_POSITIONS = [
 ];
 
 function FloatingImage({ src, position, scrollProgress, index, onClick }) {
-  // Each image flies from its floating position toward the center-bottom as scroll increases
-  const exitX = useTransform(scrollProgress, [0, 1], [0, (index % 2 === 0 ? -150 : 150)]);
-  const exitY = useTransform(scrollProgress, [0, 1], [0, 300]);
+  const { isMobile } = position; // pass it in
+  // Mobile: completely disable the exitX flying behavior, use tiny exitY to prevent layout shift
+  const exitX = useTransform(scrollProgress, [0, 1], [0, isMobile ? 0 : (index % 2 === 0 ? -150 : 150)]);
+  const exitY = useTransform(scrollProgress, [0, 1], [0, isMobile ? 50 : 300]);
   const opacity = useTransform(scrollProgress, [0, 0.55, 0.85], [1, 0.6, 0]);
-  const scale = useTransform(scrollProgress, [0, 1], [1, 0.65]);
+  const scale = useTransform(scrollProgress, [0, 1], [1, isMobile ? 0.9 : 0.65]);
   const rotate = useTransform(scrollProgress, [0, 1], [position.rotate, 0]);
 
   const springX = useSpring(exitX, { stiffness: 60, damping: 20 });
@@ -110,6 +111,15 @@ export default function CategoryHero({ categoryId, categoryTitle, onBack }) {
   const images = CATEGORY_IMAGES[categoryId] || CATEGORY_IMAGES.Villa;
   const taxonomy = FILTER_TAXONOMY[categoryId];
 
+  const [isMobile, setIsMobile] = useState(false);
+  React.useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   // Local filter state
   const [localFilters, setLocalFilters] = useState({
     location: '',
@@ -133,16 +143,16 @@ export default function CategoryHero({ categoryId, categoryTitle, onBack }) {
   });
 
   // Title: scale up as you scroll, then fade out
-  const titleScale = useTransform(scrollYProgress, [0, 0.4, 0.8], [1, 1.3, 0.7]);
+  const titleScale = useTransform(scrollYProgress, [0, 0.4, 0.8], [1, isMobile ? 1.05 : 1.3, isMobile ? 0.9 : 0.7]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.5, 0.85], [1, 0.8, 0]);
-  const titleY = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const titleY = useTransform(scrollYProgress, [0, 1], [0, isMobile ? -30 : -120]);
 
   const springTitleScale = useSpring(titleScale, { stiffness: 60, damping: 22 });
   const springTitleOpacity = useSpring(titleOpacity, { stiffness: 80, damping: 28 });
   const springTitleY = useSpring(titleY, { stiffness: 60, damping: 22 });
 
   // Listings reveal opacity
-  const listingsOpacity = useTransform(scrollYProgress, [0.5, 0.85], [0, 1]);
+  const listingsOpacity = useTransform(scrollYProgress, [isMobile ? 0.1 : 0.5, isMobile ? 0.4 : 0.85], [0, 1]);
   const listingsSpring = useSpring(listingsOpacity, { stiffness: 60, damping: 25 });
 
   return (
@@ -166,7 +176,7 @@ export default function CategoryHero({ categoryId, categoryTitle, onBack }) {
             <FloatingImage
               key={img.id}
               src={img.images[0]}
-              position={FLOAT_POSITIONS[i]}
+              position={{ ...FLOAT_POSITIONS[i], isMobile }}
               scrollProgress={scrollYProgress}
               index={i}
             />

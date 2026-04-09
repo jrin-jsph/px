@@ -501,3 +501,17 @@
     margin: 0 1rem;
   }
 }
+
+/* ── Featured Properties Grid ───────────────────────────── */
+.featuredGrid {
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+
+@media (max-width: 768px) {
+  .featuredGrid {
+    /* Single column, full width, 16px gap */
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    padding: 0 1rem !important; /* 16px horizontal padding */
+  }
+}
