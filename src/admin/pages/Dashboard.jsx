@@ -112,9 +112,9 @@ export default function Dashboard() {
         style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem' }}
       >
         <StatCard title="Total Properties" value={142} icon="🏘️" to="/admin/properties" />
-        <StatCard title="Total Inquiries" value={840} icon="📩" to="/admin/inquiries" />
+        <StatCard title="Total Enquiries" value={840} icon="📩" to="/admin/inquiries" />
         <StatCard title="Page Views" value={45200} icon="👁️" to="/admin/settings" />
-        <StatCard title="Pending Approvals" value={12} icon="⭐" to="/admin/reviews?filter=pending" />
+        <StatCard title="Client Reviews" value={12} icon="⭐" to="/admin/reviews?filter=pending" />
       </motion.div>
 
       {loading ? (
@@ -185,7 +185,7 @@ export default function Dashboard() {
 
             {/* Bar Chart */}
             <motion.div className={styles.glassCard} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: 0.1 }}>
-              <h3 style={{ marginBottom: '1.5rem', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--admin-text-main)' }}>Inquiries (Last 6 Months)</h3>
+              <h3 style={{ marginBottom: '1.5rem', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--admin-text-main)' }}>Enquiries (Last 6 Months)</h3>
               <div style={{ height: 280 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -210,7 +210,7 @@ export default function Dashboard() {
           {/* Recent Inquiries Table */}
           <motion.div className={styles.glassCard} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: 0.2 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--admin-text-main)', margin: 0 }}>Recent Inquiries</h3>
+              <h3 style={{ fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--admin-text-main)', margin: 0 }}>Recent Enquiries</h3>
               <Link to="/admin/inquiries" style={{ fontWeight: 300, color: 'var(--admin-text-muted)', textDecoration: 'underline', fontSize: '0.9rem' }}>View All</Link>
             </div>
             <div style={{ overflowX: 'auto' }}>

@@ -58,7 +58,7 @@ export default function Inquiries() {
         <div style={{ position: 'relative', flex: 1, minWidth: 280 }}>
           <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)' }} />
           <input 
-            type="text" placeholder="Search inquiries..." 
+            type="text" placeholder="Search enquiries..." 
             value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
             style={{ width: '100%', paddingLeft: '2.5rem' }} 
           />
@@ -90,7 +90,7 @@ export default function Inquiries() {
         ) : filteredInqs.length === 0 ? (
           <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--admin-text-muted)', fontWeight: 300 }}>
             <MessageSquare size={48} opacity={0.2} style={{ marginBottom: '1rem' }} />
-            <p>No inquiries match your filters.</p>
+            <p>No enquiries match your filters.</p>
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>

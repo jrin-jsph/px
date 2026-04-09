@@ -77,8 +77,7 @@ export default function Sidebar() {
 
         <div className={styles.navGroup}>
           {!collapsed && <div className={styles.navLabel}>Management</div>}
-          <NavItem to="/admin/clients" icon={Users} label="Clients" />
-          <NavItem to="/admin/inquiries" icon={MessageSquare} label="Inquiries" />
+          <NavItem to="/admin/inquiries" icon={MessageSquare} label="Enquiries" />
           <AnimatePresence>
             {sections.showReviews && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>

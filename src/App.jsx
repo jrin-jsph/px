@@ -16,7 +16,6 @@ import Contact from './pages/Contact';
 
 import Dashboard from './admin/pages/Dashboard';
 import AdminProperties from './admin/pages/AdminProperties';
-import Clients from './admin/pages/Clients';
 import Inquiries from './admin/pages/Inquiries';
 import Reviews from './admin/pages/Reviews';
 import Settings from './admin/pages/Settings';
@@ -90,7 +89,6 @@ function AppContent() {
           <Route path="properties/plots" element={<AdminProperties />} />
           <Route path="properties/warehouses" element={<AdminProperties />} />
           <Route path="properties/villas" element={<AdminProperties />} />
-          <Route path="clients" element={<Clients />} />
           <Route path="inquiries" element={<Inquiries />} />
           <Route path="reviews" element={<Reviews />} />
           <Route path="settings" element={<Settings />} />

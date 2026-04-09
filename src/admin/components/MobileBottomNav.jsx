@@ -20,7 +20,7 @@ export default function MobileBottomNav() {
   const mainItems = [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
     { to: '/admin/properties', icon: Building2, label: 'Properties' },
-    { to: '/admin/inquiries', icon: MessageSquare, label: 'Inquiries' },
+    { to: '/admin/inquiries', icon: MessageSquare, label: 'Enquiries' },
     { to: '/admin/reviews', icon: Star, label: 'Reviews' },
   ];
 
@@ -33,7 +33,6 @@ export default function MobileBottomNav() {
   ];
 
   const drawerItems = [
-    { to: '/admin/clients',        icon: Users,     label: 'Clients'          },
     { to: '/admin/settings',       icon: Settings,  label: 'Site Settings'    },
     { to: '/admin/contact-social', icon: LinkIcon,  label: 'Contact & Social' },
   ];

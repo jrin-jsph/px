@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, Edit2, Trash2, X, UploadCloud, User } from 'lucide-react';
@@ -31,7 +31,9 @@ export default function AdminProperties() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
   const [locFilter, setLocFilter] = useState('All');
+  const [catFilter, setCatFilter] = useState('All');
   const [sortOrder, setSortOrder] = useState('Newest First');
+  const [customCategories, setCustomCategories] = useState([]);
   
   // Image Upload State
   const [images, setImages] = useState([]);
@@ -108,27 +110,37 @@ export default function AdminProperties() {
 
   const uniqueLocations = [...new Set(properties.map(p => p.location))];
 
-  const filteredProperties = properties.filter(p => {
-    const term = searchTerm.toLowerCase();
-    const matchSearch = p.title.toLowerCase().includes(term) || p.location.toLowerCase().includes(term);
-    const matchStatus = statusFilter === 'All' || p.status === statusFilter;
-    const matchLoc = locFilter === 'All' || p.location === locFilter;
-    let matchPrice = true;
-    if (priceFilter === 'Under ₹50L') matchPrice = p.numericPrice < 5000000;
-    if (priceFilter === '₹50L–₹1Cr') matchPrice = p.numericPrice >= 5000000 && p.numericPrice <= 10000000;
-    if (priceFilter === '₹1Cr–₹5Cr') matchPrice = p.numericPrice > 10000000 && p.numericPrice <= 50000000;
-    if (priceFilter === 'Above ₹5Cr') matchPrice = p.numericPrice > 50000000;
-    return matchSearch && matchStatus && matchLoc && matchPrice;
-  }).sort((a, b) => {
-    if (sortOrder === 'Price: Low to High') return a.numericPrice - b.numericPrice;
-    if (sortOrder === 'Price: High to Low') return b.numericPrice - a.numericPrice;
-    return 0; 
-  });
+  const togglePropertyStatus = (id, currentStatus) => {
+    // updateDoc here when Firebase is added
+    setProperties(prev => prev.map(p => 
+      p.id === id ? { ...p, status: currentStatus === 'Active' ? 'Inactive' : 'Active' } : p
+    ));
+  };
+
+  const filteredProperties = useMemo(() => {
+    return properties.filter(p => {
+      const term = searchTerm.toLowerCase();
+      const matchSearch = p.title.toLowerCase().includes(term) || p.location.toLowerCase().includes(term);
+      const matchStatus = statusFilter === 'All' || p.status === statusFilter;
+      const matchLoc = locFilter === 'All' || p.location === locFilter;
+      const matchCat = catFilter === 'All' || p.category === catFilter;
+      let matchPrice = true;
+      if (priceFilter === 'Under ₹50L') matchPrice = p.numericPrice < 5000000;
+      if (priceFilter === '₹50L–₹1Cr') matchPrice = p.numericPrice >= 5000000 && p.numericPrice <= 10000000;
+      if (priceFilter === '₹1Cr–₹5Cr') matchPrice = p.numericPrice > 10000000 && p.numericPrice <= 50000000;
+      if (priceFilter === 'Above ₹5Cr') matchPrice = p.numericPrice > 50000000;
+      return matchSearch && matchStatus && matchLoc && matchCat && matchPrice;
+    }).sort((a, b) => {
+      if (sortOrder === 'Price: Low to High') return a.numericPrice - b.numericPrice;
+      if (sortOrder === 'Price: High to Low') return b.numericPrice - a.numericPrice;
+      return 0; 
+    });
+  }, [properties, searchTerm, statusFilter, locFilter, catFilter, priceFilter, sortOrder]);
 
   const clearFilters = () => {
-    setSearchTerm(''); setStatusFilter('All'); setPriceFilter('All'); setLocFilter('All'); setSortOrder('Newest First');
+    setSearchTerm(''); setStatusFilter('All'); setPriceFilter('All'); setLocFilter('All'); setCatFilter('All'); setSortOrder('Newest First');
   };
-  const hasActiveFilters = searchTerm || statusFilter !== 'All' || priceFilter !== 'All' || locFilter !== 'All' || sortOrder !== 'Newest First';
+  const hasActiveFilters = searchTerm || statusFilter !== 'All' || priceFilter !== 'All' || locFilter !== 'All' || catFilter !== 'All' || sortOrder !== 'Newest First';
 
   // --- Image Upload Logic ---
   const handleFileChange = (e) => {
@@ -254,48 +266,78 @@ export default function AdminProperties() {
           {getPageIcon()}
           <h2 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.04em', margin: 0 }}>{getPageTitle()}</h2>
         </div>
-        <button 
-          className="btn" 
-          style={{ background: '#ed1b24', color: 'white', border: 'none', padding: '0.75rem 1.5rem', fontWeight: 700 }}
-          onClick={() => { setIsDrawerOpen(true); setEditingId(null); setImages([]); setFormData(initialForm); setFormErrors([]); }}
-        >
-          <Plus size={18} style={{ marginRight: '0.5rem' }} /> Add Property
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <button 
+            className="btn" 
+            style={{ background: 'var(--admin-glass-bg)', border: '1px solid var(--admin-stroke)', padding: '0.75rem 1rem', fontWeight: 600, cursor: 'pointer' }}
+            onClick={() => {
+              const newCat = window.prompt("Enter new custom category name:");
+              if (newCat && newCat.trim() && !customCategories.includes(newCat.trim())) {
+                setCustomCategories(prev => [...prev, newCat.trim()]);
+                setShowToast('Custom category added!');
+                setTimeout(() => setShowToast(''), 2500);
+              }
+            }}
+          >
+            + Custom Type
+          </button>
+          <button 
+            className="btn" 
+            style={{ background: '#ed1b24', color: 'white', border: 'none', padding: '0.75rem 1.5rem', fontWeight: 700, cursor: 'pointer' }}
+            onClick={() => { setIsDrawerOpen(true); setEditingId(null); setImages([]); setFormData(initialForm); setFormErrors([]); }}
+          >
+            <Plus size={18} style={{ marginRight: '0.5rem' }} /> Add Property
+          </button>
+        </div>
       </div>
 
       {/* Filter Bar */}
-      <div className={styles.glassCard} style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
-        <div style={{ position: 'relative', width: 280 }}>
-          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)' }} />
-          <input 
-            type="text" placeholder="Search by title or location..." 
-            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%', paddingLeft: '2.5rem' }} 
-          />
-          {searchTerm && <X size={16} onClick={() => setSearchTerm('')} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--admin-text-muted)' }} />}
+      <div className={`${styles.glassCard} ${styles.adminReviewGrid}`} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', width: '100%' }}>
+          <div style={{ position: 'relative', flex: '1 1 auto' }}>
+            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)' }} />
+            <input 
+              type="text" placeholder="Search by title or location..." 
+              value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '100%', paddingLeft: '2.5rem', height: 40, borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', color: 'var(--admin-text-main)' }} 
+            />
+            {searchTerm && <X size={16} onClick={() => setSearchTerm('')} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--admin-text-muted)' }} />}
+          </div>
         </div>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: '0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
-          <option value="All">Status: All</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-        </select>
-        <select value={priceFilter} onChange={e => setPriceFilter(e.target.value)} style={{ padding: '0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
-          <option value="All">Price: All</option>
-          <option value="Under ₹50L">Under ₹50L</option>
-          <option value="₹50L–₹1Cr">₹50L–₹1Cr</option>
-          <option value="₹1Cr–₹5Cr">₹1Cr–₹5Cr</option>
-          <option value="Above ₹5Cr">Above ₹5Cr</option>
-        </select>
-        <select value={locFilter} onChange={e => setLocFilter(e.target.value)} style={{ padding: '0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
-          <option value="All">Location: All</option>
-          {uniqueLocations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
-        </select>
-        <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} style={{ padding: '0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
-          <option value="Newest First">Newest First</option>
-          <option value="Price: Low to High">Price: Low to High</option>
-          <option value="Price: High to Low">Price: High to Low</option>
-        </select>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
+          <select value={catFilter} onChange={e => setCatFilter(e.target.value)} style={{ flex: '1 1 120px', height: 40, padding: '0 0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
+             <option value="All">Category: All</option>
+             <option value="Flat">Flat</option>
+             <option value="Villa">Villa</option>
+             <option value="Warehouse">Warehouse</option>
+             <option value="Plot">Plot</option>
+             {customCategories.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ flex: '1 1 120px', height: 40, padding: '0 0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
+            <option value="All">Status: All</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+          <select value={priceFilter} onChange={e => setPriceFilter(e.target.value)} style={{ flex: '1 1 120px', height: 40, padding: '0 0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
+            <option value="All">Price: All</option>
+            <option value="Under ₹50L">Under ₹50L</option>
+            <option value="₹50L–₹1Cr">₹50L–₹1Cr</option>
+            <option value="₹1Cr–₹5Cr">₹1Cr–₹5Cr</option>
+            <option value="Above ₹5Cr">Above ₹5Cr</option>
+          </select>
+          <select value={locFilter} onChange={e => setLocFilter(e.target.value)} style={{ flex: '1 1 120px', height: 40, padding: '0 0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
+            <option value="All">Location: All</option>
+            {uniqueLocations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
+          </select>
+          <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} style={{ flex: '1 1 120px', height: 40, padding: '0 0.6rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600 }}>
+            <option value="Newest First">Newest First</option>
+            <option value="Price: Low to High">Price: Low to High</option>
+            <option value="Price: High to Low">Price: High to Low</option>
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', width: '100%', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
           {hasActiveFilters && <button onClick={clearFilters} style={{ background: 'none', border: 'none', color: '#ed1b24', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Clear All Filters</button>}
           <span style={{ fontSize: '0.9rem', color: 'var(--admin-text-muted)', fontWeight: 300 }}>{filteredProperties.length} results found</span>
         </div>
@@ -333,9 +375,11 @@ export default function AdminProperties() {
                     <td style={{ padding: '1rem', fontWeight: 300, color: 'var(--admin-text-muted)' }}>{prop.location}</td>
                     <td style={{ padding: '1rem', fontWeight: 400, fontVariantNumeric: 'tabular-nums' }}>{prop.price}</td>
                     <td style={{ padding: '1rem' }}>
-                      <span style={{ padding: '0.25rem 0.75rem', borderRadius: 20, fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', background: prop.status === 'Active' ? 'rgba(46,204,113,0.1)' : 'rgba(85,85,85,0.1)', color: prop.status === 'Active' ? '#2ecc71' : '#555555' }}>
+                      <button 
+                        onClick={() => togglePropertyStatus(prop.id, prop.status)}
+                        style={{ padding: '0.25rem 0.75rem', borderRadius: 20, fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', background: prop.status === 'Active' ? 'rgba(46,204,113,0.1)' : 'rgba(85,85,85,0.1)', color: prop.status === 'Active' ? '#2ecc71' : '#555555', border: 'none', cursor: 'pointer', outline: 'none' }}>
                         {prop.status}
-                      </span>
+                      </button>
                     </td>
                     <td style={{ padding: '1rem', textAlign: 'right' }}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
@@ -408,6 +452,7 @@ export default function AdminProperties() {
                         <option value="Plot">Plot</option>
                         <option value="Warehouse">Warehouse</option>
                         <option value="Villa">Villa</option>
+                        {customCategories.map(c => <option key={c} value={c}>{c}</option>)}
                       </select>
                     </div>
                     <div>

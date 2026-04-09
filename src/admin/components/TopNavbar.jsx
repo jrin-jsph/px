@@ -134,8 +134,7 @@ export default function TopNavbar() {
       if (path.includes('villas')) return 'Villas';
       return 'All Properties';
     }
-    if (path.includes('/clients')) return 'Clients';
-    if (path.includes('/inquiries')) return 'Inquiries';
+    if (path.includes('/inquiries')) return 'Enquiries';
     if (path.includes('/reviews')) return 'Reviews';
     if (path.includes('/settings')) return 'Site Settings';
     if (path.includes('/contact-social')) return 'Contact & Social';
@@ -146,9 +145,8 @@ export default function TopNavbar() {
   const dividerColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
   const getNotifIcon = (type) => {
-    if (type === 'New Inquiry') return <MessageSquare size={16} />;
+    if (type === 'New Enquiry') return <MessageSquare size={16} />;
     if (type === 'New Review') return <Star size={16} />;
-    if (type === 'New Client') return <Users size={16} />;
     return <Building2 size={16} />;
   };
 

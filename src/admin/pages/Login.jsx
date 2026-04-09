@@ -10,7 +10,6 @@ import logo from '../../assets/logo.png';
 
 export default function Login() {
   const { login } = useAdmin();
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -21,8 +20,8 @@ export default function Login() {
     setError('');
 
     // Trigger shake animation check
-    if (email !== ADMIN_AUTH.EMAIL || password !== ADMIN_AUTH.PASSWORD) {
-      setError('Invalid email or password.');
+    if (password !== ADMIN_AUTH.PASSWORD) {
+      setError('Invalid password.');
       setShake(true);
       setTimeout(() => setShake(false), 500); // Reset shake after animation
       return;
@@ -62,27 +61,6 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleLogin} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div>
-            <input 
-              type="email" 
-              placeholder="Email address"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              style={{
-                width: '100%',
-                padding: '1rem 1.25rem',
-                fontSize: '1rem',
-                fontWeight: 300,
-                background: 'rgba(255,255,255,0.4)',
-                border: '1px solid var(--admin-glass-border)',
-                borderRadius: 12,
-                outline: 'none',
-                color: 'var(--admin-text-main)'
-              }}
-            />
-          </div>
-          
           <div style={{ position: 'relative' }}>
             <input 
               type={showPassword ? "text" : "password"} 
