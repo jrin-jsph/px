@@ -16,12 +16,12 @@ const FLOAT_POSITIONS = [
 ];
 
 function FloatingImage({ src, position, scrollProgress, index, onClick }) {
-  const { isMobile } = position; // pass it in
-  // Mobile: completely disable the exitX flying behavior, use tiny exitY to prevent layout shift
-  const exitX = useTransform(scrollProgress, [0, 1], [0, isMobile ? 0 : (index % 2 === 0 ? -150 : 150)]);
-  const exitY = useTransform(scrollProgress, [0, 1], [0, isMobile ? 50 : 300]);
+  const { isMobile } = position; // keep for potential scaling
+  // Full flying animations enabled on mobile, but scale reduced slightly
+  const exitX = useTransform(scrollProgress, [0, 1], [0, index % 2 === 0 ? -150 : 150]);
+  const exitY = useTransform(scrollProgress, [0, 1], [0, 300]);
   const opacity = useTransform(scrollProgress, [0, 0.55, 0.85], [1, 0.6, 0]);
-  const scale = useTransform(scrollProgress, [0, 1], [1, isMobile ? 0.9 : 0.65]);
+  const scale = useTransform(scrollProgress, [0, 1], [1, isMobile ? 0.8 : 0.65]);
   const rotate = useTransform(scrollProgress, [0, 1], [position.rotate, 0]);
 
   const springX = useSpring(exitX, { stiffness: 60, damping: 20 });
@@ -171,56 +171,29 @@ export default function CategoryHero({ categoryId, categoryTitle, onBack }) {
             ← Back
           </motion.button>
 
-          {isMobile ? (
-            <div className={styles.mobileHeroLayout}>
-              <div className={styles.mobileHeroImages}>
-                {images.slice(0, 2).map((img, i) => (
-                  <motion.div 
-                    key={img.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.15 + 0.2 }}
-                    className={styles.mobileHeroImgWrap}
-                  >
-                    <img src={img.images[0]} alt="" className={styles.mobileHeroImg} />
-                  </motion.div>
-                ))}
-              </div>
-              <motion.div 
-                className={styles.mobileTitleContainer}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <h1 className={styles.mobileHeroTitleText}>{categoryTitle}</h1>
-              </motion.div>
-            </div>
-          ) : (
-            <>
-              {/* Floating images */}
-              {images.slice(0, 4).map((img, i) => (
-                <FloatingImage
-                  key={img.id}
-                  src={img.images[0]}
-                  position={{ ...FLOAT_POSITIONS[i], isMobile }}
-                  scrollProgress={scrollYProgress}
-                  index={i}
-                />
-              ))}
+          {/* Floating images */}
+          {images.slice(0, 4).map((img, i) => (
+            <FloatingImage
+              key={img.id}
+              src={img.images[0]}
+              position={{ ...FLOAT_POSITIONS[i], isMobile }}
+              scrollProgress={scrollYProgress}
+              index={i}
+            />
+          ))}
 
-              {/* Big category name */}
-              <motion.div
-                className={styles.heroTitle}
-                style={{
-                  scale: springTitleScale,
-                  opacity: springTitleOpacity,
-                  y: springTitleY,
-                }}
-              >
-                {categoryTitle}
-              </motion.div>
-            </>
-          )}
+          {/* Big category name */}
+          <motion.div
+            className={styles.heroTitle}
+            style={{
+              scale: springTitleScale,
+              opacity: springTitleOpacity,
+              y: springTitleY,
+              zIndex: 30 // Force exactly here for framer motion overrides
+            }}
+          >
+            {categoryTitle}
+          </motion.div>
 
 
         </div>
