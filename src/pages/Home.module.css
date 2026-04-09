@@ -104,6 +104,7 @@
 @media (max-width: 768px) {
   .bentoGrid {
     flex-direction: column;
+    min-height: auto;
   }
 }
 
@@ -123,7 +124,6 @@
 }
 
 @media (max-width: 768px) {
-
   .bentoOffset1,
   .bentoOffset2 {
     margin-top: 0;
@@ -143,19 +143,19 @@
 
 @media (max-width: 768px) {
   .statCard {
-    padding: 1.5rem;
-    min-height: 250px;
+    padding: 1.25rem 1.75rem;
+    min-height: 160px;
   }
 
   .bgTeal,
   .bgGreen {
-    min-height: 250px;
+    min-height: 160px;
   }
 }
 
 .statNumber {
   font-family: var(--font-main);
-  font-size: clamp(4rem, 8vw, 8.5rem) !important;
+  font-size: clamp(3rem, 10vw, 8.5rem) !important;
   font-weight: 800 !important;
   line-height: 0.9 !important;
   letter-spacing: -0.06em !important;
