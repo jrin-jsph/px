@@ -48,10 +48,10 @@ export default function Reviews() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', overflowX: 'hidden', boxSizing: 'border-box', padding: '0 16px', width: '100%' }}>
       
       {/* Filters Bar */}
-      <div className={styles.glassCard} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className={styles.glassCard} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', boxSizing: 'border-box', minWidth: 0 }}>
 
         {/* Tabs Row — full width, wraps on mobile */}
-        <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.4)', padding: '0.25rem', borderRadius: 40, border: '1px solid var(--admin-stroke)', overflowX: 'auto', flexShrink: 0, width: '100%', boxSizing: 'border-box', scrollbarWidth: 'none' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.4)', padding: '0.25rem', borderRadius: 40, border: '1px solid var(--admin-stroke)', overflowX: 'auto', flexShrink: 0, width: '100%', boxSizing: 'border-box', scrollbarWidth: 'none', minWidth: 0 }}>
           {['Pending', 'Approved', 'Rejected'].map(tab => (
             <button
               key={tab}
@@ -67,7 +67,7 @@ export default function Reviews() {
         </div>
 
         {/* Search + Filter Row */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', boxSizing: 'border-box', minWidth: 0 }}>
           <div style={{ position: 'relative', width: '100%', boxSizing: 'border-box' }}>
             <Search size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }} />
             <input

@@ -62,6 +62,15 @@ export function AdminProvider({ children }) {
   ]);
 
   const [customCategories, setCustomCategories] = useState([]);
+  const [deleteModalConfig, setDeleteModalConfig] = useState({ isOpen: false, category: '' });
+
+  const requestDeleteCustomCategory = (name) => {
+    setDeleteModalConfig({ isOpen: true, category: name });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalConfig({ isOpen: false, category: '' });
+  };
 
   const addCustomCategory = (name) => {
     if (name && !customCategories.includes(name.trim()) && !['Flat', 'Villa', 'Plot', 'Warehouse'].includes(name.trim())) {
@@ -69,12 +78,12 @@ export function AdminProvider({ children }) {
     }
   };
 
-  const deleteCustomCategory = (name, action = 'delete') => {
+  const deleteCustomCategory = (name, action = 'delete', destCategory = '') => {
     setCustomCategories(prev => prev.filter(c => c !== name));
     if (action === 'delete') {
       setProperties(prev => prev.filter(p => p.category !== name));
-    } else {
-      setProperties(prev => prev.map(p => p.category === name ? { ...p, category: 'Uncategorized' } : p));
+    } else if (action === 'move' && destCategory) {
+      setProperties(prev => prev.map(p => p.category === name ? { ...p, category: destCategory } : p));
     }
   };
 
@@ -85,7 +94,8 @@ export function AdminProvider({ children }) {
         sections, setSections,
         notifications, setNotifications, markAllAsRead, deleteNotification, clearAllNotifications,
         isDark, toggleTheme,
-        properties, setProperties, customCategories, addCustomCategory, deleteCustomCategory
+        properties, setProperties, customCategories, addCustomCategory, deleteCustomCategory,
+        deleteModalConfig, requestDeleteCustomCategory, closeDeleteModal
       }}
     >
       {children}

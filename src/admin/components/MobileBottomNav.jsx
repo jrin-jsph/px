@@ -9,24 +9,8 @@ import logo from '../../assets/logo.png';
 export default function MobileBottomNav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [propExpanded, setPropExpanded] = useState(true);
-  const { logout, customCategories, deleteCustomCategory, properties } = useAdmin();
+  const { logout, customCategories, requestDeleteCustomCategory } = useAdmin();
   const navigate = useNavigate();
-
-  const handleDeleteCustom = (e, name) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const propsCount = properties.filter(p => p.category.toLowerCase() === name.toLowerCase()).length;
-    const msg = `This type has ${propsCount} properties. Delete all or keep properties but remove type?\n\nOK = Delete All\nCancel = Keep Properties (Moves to Uncategorized)`;
-    if (window.confirm(msg)) {
-      deleteCustomCategory(name, 'delete');
-    } else {
-      deleteCustomCategory(name, 'keep');
-    }
-    const pathSegments = window.location.pathname.split('/');
-    if (pathSegments[pathSegments.length - 1].toLowerCase() === name.toLowerCase()) {
-      navigate('/admin/properties');
-    }
-  };
 
   const handleLogout = () => {
     setDrawerOpen(false);
@@ -154,7 +138,7 @@ export default function MobileBottomNav() {
                               <span style={{ fontSize: '0.875rem', fontWeight: 600, width: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat}</span>
                             </NavLink>
                             <button
-                              onClick={(e) => handleDeleteCustom(e, cat)}
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); requestDeleteCustomCategory(cat); setDrawerOpen(false); }}
                               style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--admin-text-muted)' }}
                             >
                               <Trash2 size={16} />

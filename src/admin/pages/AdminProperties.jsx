@@ -73,7 +73,7 @@ export default function AdminProperties() {
   }, [editingId, selectedProperty]);
 
   const pathSegments = location.pathname.split('/');
-  const activeCategory = pathSegments[pathSegments.length - 1];
+  const activeCategory = decodeURIComponent(pathSegments[pathSegments.length - 1]);
 
   // 1. Loading Skeleton
   useEffect(() => {

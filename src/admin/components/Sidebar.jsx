@@ -9,24 +9,8 @@ import logo from '../../assets/logo.png';
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
-  const { sections, logout, customCategories, deleteCustomCategory, properties } = useAdmin();
+  const { sections, logout, customCategories, requestDeleteCustomCategory } = useAdmin();
   const navigate = useNavigate();
-
-  const handleDeleteCustom = (e, name) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const propsCount = properties.filter(p => p.category.toLowerCase() === name.toLowerCase()).length;
-    const msg = `This type has ${propsCount} properties. Delete all or keep properties but remove type?\n\nOK = Delete All\nCancel = Keep Properties (Moves to Uncategorized)`;
-    if (window.confirm(msg)) {
-      deleteCustomCategory(name, 'delete');
-    } else {
-      deleteCustomCategory(name, 'keep');
-    }
-    const pathSegments = window.location.pathname.split('/');
-    if (pathSegments[pathSegments.length - 1].toLowerCase() === name.toLowerCase()) {
-      navigate('/admin/properties');
-    }
-  };
 
   const handleLogout = () => {
     logout();
@@ -53,7 +37,7 @@ export default function Sidebar() {
       </NavLink>
       {isCustom && !collapsed && (
         <button 
-          onClick={(e) => handleDeleteCustom(e, label)}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); requestDeleteCustomCategory(label); }}
           style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--admin-text-muted)' }}
           title={`Delete ${label}`}
         >

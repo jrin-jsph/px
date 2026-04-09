@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
 import TopNavbar from '../components/TopNavbar';
 import MobileBottomNav from '../components/MobileBottomNav';
+import CategoryDeleteModal from '../components/CategoryDeleteModal';
 import Login from '../pages/Login';
 import { useAdmin } from '../context/AdminContext';
 import styles from '../styles/admin.module.css';
@@ -57,6 +58,7 @@ export default function AdminLayout() {
 
             {/* Mobile Bottom Nav — shown only on mobile via CSS */}
             <MobileBottomNav />
+            <CategoryDeleteModal />
           </motion.div>
         )}
       </AnimatePresence>
