@@ -24,6 +24,7 @@ export default function AdminProperties() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
   const [locFilter, setLocFilter] = useState('All');
+  const [catFilter, setCatFilter] = useState('All');
   const [sortOrder, setSortOrder] = useState('Newest First');
   
   // Image Upload State
