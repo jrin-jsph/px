@@ -110,6 +110,7 @@ export default function Properties() {
                     </motion.div>
                   ))}
                 </div>
+              </div>
             </section>
           </motion.div>
         ) : (
