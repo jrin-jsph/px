@@ -1,22 +1,51 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useAdmin } from '../context/AdminContext';
+import { Check } from 'lucide-react';
 import styles from '../styles/admin.module.css';
 
 export default function Settings() {
-  const ToggleRow = ({ label, defaultChecked }) => (
+  const { sections, setSections } = useAdmin();
+  
+  // Local drafted state for dirty checking
+  const [draft, setDraft] = useState(sections);
+  const [isDirty, setIsDirty] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+    const dirty = Object.keys(sections).some(k => sections[k] !== draft[k]);
+    setIsDirty(dirty);
+  }, [draft, sections]);
+
+  const handleToggle = (key) => {
+    setDraft(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSave = () => {
+    setSections(draft);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2500);
+  };
+
+  const ToggleRow = ({ label, stateKey }) => (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 0', borderBottom: '1px solid var(--admin-stroke)' }}>
       <span style={{ fontWeight: 500 }}>{label}</span>
       <label style={{ position: 'relative', display: 'inline-block', width: 50, height: 28 }}>
-        <input type="checkbox" defaultChecked={defaultChecked} style={{ opacity: 0, width: 0, height: 0 }} />
+        <input 
+          type="checkbox" 
+          checked={draft[stateKey]} 
+          onChange={() => handleToggle(stateKey)} 
+          style={{ opacity: 0, width: 0, height: 0 }} 
+        />
         <span style={{ 
           position: 'absolute', cursor: 'pointer', inset: 0, 
-          background: defaultChecked ? '#18181a' : 'rgba(0,0,0,0.1)', 
+          background: draft[stateKey] ? '#18181a' : 'rgba(0,0,0,0.1)', 
           borderRadius: 34, transition: '0.4s' 
         }}>
           <span style={{ 
             position: 'absolute', height: 20, width: 20, left: 4, bottom: 4, 
             background: 'white', borderRadius: '50%', transition: '0.4s',
-            transform: defaultChecked ? 'translateX(22px)' : 'translateX(0)'
+            transform: draft[stateKey] ? 'translateX(22px)' : 'translateX(0)'
           }}></span>
         </span>
       </label>
@@ -24,7 +53,7 @@ export default function Settings() {
   );
 
   return (
-    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay: 0.1}} style={{ maxWidth: 800 }}>
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay: 0.1}} style={{ maxWidth: 800, position: 'relative' }}>
       <div className={styles.glassCard} style={{ marginBottom: '2rem' }}>
         <h3 style={{ fontSize: '1.25rem', fontWeight: 600, letterSpacing: '-0.02em', marginBottom: '1.5rem' }}>General Settings</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -45,21 +74,52 @@ export default function Settings() {
 
       <div className={styles.glassCard} style={{ marginBottom: '2rem' }}>
         <h3 style={{ fontSize: '1.25rem', fontWeight: 600, letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>Section Visibility</h3>
-        <p style={{ color: 'var(--admin-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Toggle which property categories and sections appear on the public website.</p>
+        <p style={{ color: 'var(--admin-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Toggle which property categories and sections appear on the public website and admin sidebar.</p>
         
         <div>
-          <ToggleRow label="Show Flats Category" defaultChecked={true} />
-          <ToggleRow label="Show Plots Category" defaultChecked={true} />
-          <ToggleRow label="Show Warehouses Category" defaultChecked={true} />
-          <ToggleRow label="Show Villas Category" defaultChecked={true} />
-          <ToggleRow label="Show Customer Reviews" defaultChecked={true} />
-          <ToggleRow label="Show Contact Form" defaultChecked={true} />
+          <ToggleRow label="Show Flats Category" stateKey="showFlats" />
+          <ToggleRow label="Show Plots Category" stateKey="showPlots" />
+          <ToggleRow label="Show Warehouses Category" stateKey="showWarehouses" />
+          <ToggleRow label="Show Villas Category" stateKey="showVillas" />
+          <ToggleRow label="Show Customer Reviews" stateKey="showReviews" />
+          <ToggleRow label="Show Contact Form" stateKey="showContactForm" />
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-        <button className="btn" style={{ background: '#ed1b24', color: 'white', border: 'none', fontWeight: 700, padding: '1rem 3rem' }}>Save Settings</button>
-      </div>
+      <AnimatePresence>
+        {isDirty && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: 20 }}
+            style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', position: 'sticky', bottom: '2rem' }}
+          >
+            <button className="btn" onClick={handleSave} style={{ background: '#ed1b24', color: 'white', border: 'none', fontWeight: 700, padding: '1rem 3rem', boxShadow: '0 8px 30px rgba(237,27,36,0.3)' }}>
+              Save Settings
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }}
+            style={{
+              position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 1000,
+              background: 'var(--admin-glass-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid var(--admin-glass-border)', padding: '1rem 1.5rem', borderRadius: 16,
+              display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 600, boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}
+          >
+            <div style={{ background: '#2ecc71', color: 'white', borderRadius: '50%', padding: '0.2rem' }}>
+              <Check size={14} />
+            </div>
+            Settings saved
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </motion.div>
   );

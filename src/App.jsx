@@ -6,6 +6,7 @@ import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import WhatsAppBubble from './components/common/WhatsAppBubble';
 import AdminLayout from './admin/layouts/AdminLayout';
+import { AdminProvider } from './admin/context/AdminContext';
 
 import Home from './pages/Home';
 import Properties from './pages/Properties';
@@ -101,5 +102,9 @@ function AppContent() {
 }
 
 export default function App() {
-  return <AppContent />;
+  return (
+    <AdminProvider>
+      <AppContent />
+    </AdminProvider>
+  );
 }
