@@ -45,13 +45,13 @@ export default function Reviews() {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', overflowX: 'hidden', boxSizing: 'border-box', padding: '0 16px', width: '100%' }}>
       
       {/* Filters Bar */}
       <div className={styles.glassCard} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
         {/* Tabs Row — full width, wraps on mobile */}
-        <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.4)', padding: '0.25rem', borderRadius: 40, border: '1px solid var(--admin-stroke)', overflowX: 'auto', flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.4)', padding: '0.25rem', borderRadius: 40, border: '1px solid var(--admin-stroke)', overflowX: 'auto', flexShrink: 0, width: '100%', boxSizing: 'border-box', scrollbarWidth: 'none' }}>
           {['Pending', 'Approved', 'Rejected'].map(tab => (
             <button
               key={tab}
@@ -67,8 +67,8 @@ export default function Reviews() {
         </div>
 
         {/* Search + Filter Row */}
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ position: 'relative', flex: '1 1 180px', minWidth: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', boxSizing: 'border-box' }}>
+          <div style={{ position: 'relative', width: '100%', boxSizing: 'border-box' }}>
             <Search size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', pointerEvents: 'none' }} />
             <input
               type="text" placeholder="Search reviews..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
@@ -78,7 +78,7 @@ export default function Reviews() {
           </div>
 
           <select value={ratingFilter} onChange={e => setRatingFilter(e.target.value)}
-            style={{ height: 40, padding: '0 0.75rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600, fontSize: '0.85rem', color: 'var(--admin-text-main)', fontFamily: 'Outfit, sans-serif', flexShrink: 0 }}
+            style={{ width: '100%', height: 40, padding: '0 0.75rem', borderRadius: 8, border: '1px solid var(--admin-stroke)', background: 'rgba(255,255,255,0.5)', outline: 'none', fontWeight: 600, fontSize: '0.85rem', color: 'var(--admin-text-main)', fontFamily: 'Outfit, sans-serif', boxSizing: 'border-box' }}
           >
             <option value="All">All Stars</option>
             <option value="5">⭐⭐⭐⭐⭐</option>
