@@ -153,107 +153,19 @@
 }
 
 @media (max-width: 768px) {
-  /* Hide the regular grid on mobile — show scroll row instead */
+  /* On mobile, stack category cards vertically in a single column */
   .catGrid {
-    display: none;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   .catCard {
-    height: 280px;
+    height: 320px;
   }
 }
 
 @media (max-width: 480px) {
-  .catGrid {
-    display: none;
-  }
-}
-
-/* ── Mobile horizontal scroll-snap row ───────────────────── */
-.catScrollRow {
-  display: none; /* hidden on desktop */
-}
-
-@media (max-width: 768px) {
-  .catScrollRow {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 1rem;
-    padding: 0 1rem 32px;
-    /* Show 1.2 cards — right edge of second card peeks */
-    padding-right: 0.5rem;
-    scrollbar-width: none; /* Firefox */
-  }
-
-  .catScrollRow::-webkit-scrollbar {
-    display: none;
-  }
-
-  .catScrollCardWrap {
-    flex: 0 0 calc(100vw - 2.5rem);
-    max-width: 340px;
-    scroll-snap-align: start;
-    cursor: pointer;
-  }
-
-  .catScrollCard {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    height: 320px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.14);
-    width: 100%;
-  }
-
-  .catScrollBgImg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* Dark gradient scrim — bottom third */
-  .catScrollScrim {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.78) 0%,
-      rgba(0, 0, 0, 0.1) 45%,
-      transparent 100%
-    );
-  }
-
-  .catScrollLabel {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1.25rem 1.25rem 1.5rem;
-    z-index: 5;
-  }
-
-  .catScrollTitle {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    display: block;
-    /* Clamp inside card bounds */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .catScrollDesc {
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.72);
-    margin-top: 0.25rem;
-    display: block;
+  .catCard {
+    height: 300px;
   }
 }

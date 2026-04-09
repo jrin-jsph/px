@@ -110,30 +110,6 @@ export default function Properties() {
                     </motion.div>
                   ))}
                 </div>
-              </div>
-
-              {/* ── Mobile horizontal scroll-snap row (hidden on desktop) ── */}
-              <div className={styles.catScrollRow}>
-                {CATEGORIES.map((cat) => (
-                  <div
-                    key={cat.id}
-                    className={styles.catScrollCardWrap}
-                    onClick={() => handleSelectCategory(cat)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSelectCategory(cat)}
-                  >
-                    <div className={styles.catScrollCard}>
-                      <img src={cat.img} alt={cat.title} className={styles.catScrollBgImg} />
-                      <div className={styles.catScrollScrim} />
-                      <div className={styles.catScrollLabel}>
-                        <span className={styles.catScrollTitle}>{cat.title}</span>
-                        <span className={styles.catScrollDesc}>{cat.desc}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </section>
           </motion.div>
         ) : (
