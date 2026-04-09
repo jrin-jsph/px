@@ -42,6 +42,17 @@
   --admin-stroke: rgba(255, 255, 255, 0.1);
 }
 
+.adminLayout h1, 
+.adminLayout h2, 
+.adminLayout h3, 
+.adminLayout h4, 
+.adminLayout h5, 
+.adminLayout h6,
+.adminLayout strong,
+.adminLayout b {
+  color: var(--admin-text-main);
+}
+
 .sidebar {
   width: 240px;
   height: 100vh;
